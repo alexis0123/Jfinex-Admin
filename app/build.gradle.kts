@@ -63,6 +63,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    implementation(libs.poi)
-    implementation(libs.poi.ooxml.lite)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.opencsv)
 }

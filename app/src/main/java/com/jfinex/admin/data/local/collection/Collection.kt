@@ -8,5 +8,5 @@ data class Collection(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
-    val categories: List<String>?
+    val categories: List<String>
 )

@@ -2,7 +2,7 @@ package com.jfinex.admin.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import com.jfinex.admin.data.local.collection.Collection
 import com.jfinex.admin.data.local.collection.CollectionDao
 
@@ -12,6 +12,9 @@ import com.jfinex.admin.data.local.collection.CollectionDao
     ],
     version = 1,
     exportSchema = false
+)
+@TypeConverters(
+    ListConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun collectionDao(): CollectionDao

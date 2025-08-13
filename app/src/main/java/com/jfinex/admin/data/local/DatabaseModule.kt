@@ -1,0 +1,31 @@
+package com.jfinex.admin.data.local
+
+import android.app.Application
+import androidx.room.Room
+import com.jfinex.admin.data.local.collection.CollectionDao
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DatabaseModule {
+
+    @Provides
+    @Singleton
+    fun providesDatabase(app: Application): AppDatabase {
+        return Room.databaseBuilder(
+            app,
+            AppDatabase::class.java,
+            "jfinex_admin_db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    fun providesCollectionDao(db: AppDatabase): CollectionDao = db.collectionDao()
+
+}

@@ -66,4 +66,5 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.opencsv)
     implementation(libs.compose.foundation.pager)
+    implementation(libs.androidx.material.icons.extended)
 }

@@ -31,6 +31,7 @@ import com.jfinex.admin.ui.csv.CsvViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun ShowFileDialog(
@@ -112,7 +113,8 @@ fun ShowFileDialog(
                                         Text(
                                             text = item,
                                             modifier = Modifier.weight(weight),
-                                            maxLines = 1
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
                                 }

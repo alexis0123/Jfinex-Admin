@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -56,8 +57,10 @@ fun CreateConfigDialog(
     val context = LocalContext.current
     val hasFile by viewModel.hasFile.collectAsState()
     val fileName by viewModel.fileName.collectAsState()
+    val loading by viewModel.loading.collectAsState()
     var showFile by remember { mutableStateOf(false) }
     var showHelpCsv by remember { mutableStateOf(false) }
+
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let {
             viewModel.loadCsv(context.contentResolver, it)
@@ -120,25 +123,34 @@ fun CreateConfigDialog(
                                 .width(190.dp)
                                 .height(50.dp)
                         ) {
-                            if (!hasFile) {
-                                Icon(
-                                    imageVector = Icons.Default.AttachFile,
-                                    contentDescription = "Attach",
-                                    modifier = Modifier.padding(end = 6.dp)
-                                )
-                                Text("Pick CSV File")
-                            } else {
-                                Text(
-                                    text = "$fileName",
-                                    color = Color.Black,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.Cancel,
-                                    contentDescription = "Clear",
-                                    modifier = Modifier.padding(start = 6.dp)
-                                        .clickable(onClick = { viewModel.clear() })
-                                )
+                            when {
+                                loading -> {
+                                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                                }
+
+                                !hasFile -> {
+                                    Icon(
+                                        imageVector = Icons.Default.AttachFile,
+                                        contentDescription = "Attach",
+                                        modifier = Modifier.padding(end = 6.dp)
+                                    )
+                                    Text("Pick CSV File")
+                                }
+
+                                else -> {
+                                    Text(
+                                        text = "$fileName",
+                                        color = Color.Black,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Default.Cancel,
+                                        contentDescription = "Clear",
+                                        modifier = Modifier
+                                            .padding(start = 6.dp)
+                                            .clickable(onClick = { viewModel.clear() })
+                                    )
+                                }
                             }
                         }
                         Button(

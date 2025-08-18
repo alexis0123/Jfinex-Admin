@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
-fun ShowFileDialog(
+fun ShowFile(
     onDismiss: () -> Unit,
     viewModel: CsvViewModel = hiltViewModel()
 ) {

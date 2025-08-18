@@ -75,7 +75,7 @@ fun CreateConfigDialog(
     }
 
     if (showFile) {
-        ShowFileDialog(
+        ShowFile(
             onDismiss = { showFile = false }
         )
     }

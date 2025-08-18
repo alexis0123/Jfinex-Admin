@@ -10,19 +10,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Help
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,33 +38,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.ui.csv.CsvViewModel
-import com.jfinex.admin.ui.theme.AdminTheme
+import com.jfinex.admin.ui.field.FieldViewModel
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun CreateConfigDialog(
     onDismiss: () -> Unit,
-    viewModel: CsvViewModel = hiltViewModel()
+    csvViewModel: CsvViewModel = hiltViewModel(),
+    fieldViewModel: FieldViewModel = hiltViewModel()
 ) {
+    val fields by fieldViewModel.fields.collectAsState()
 
     val context = LocalContext.current
-    val hasFile by viewModel.hasFile.collectAsState()
-    val fileName by viewModel.fileName.collectAsState()
-    val loading by viewModel.loading.collectAsState()
+    val hasFile by csvViewModel.hasFile.collectAsState()
+    val fileName by csvViewModel.fileName.collectAsState()
+    val loading by csvViewModel.loading.collectAsState()
     var showFile by remember { mutableStateOf(false) }
     var showHelpCsv by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let {
-            viewModel.loadCsv(context.contentResolver, it)
+            csvViewModel.loadCsv(context.contentResolver, it)
         }
     }
 
@@ -154,7 +161,7 @@ fun CreateConfigDialog(
                                         contentDescription = "Clear",
                                         modifier = Modifier
                                             .padding(start = 6.dp)
-                                            .clickable(onClick = { viewModel.clear() })
+                                            .clickable(onClick = { csvViewModel.clear() })
                                     )
                                 }
                             }
@@ -164,7 +171,7 @@ fun CreateConfigDialog(
                             shape = RoundedCornerShape(10.dp),
                             border = BorderStroke(1.dp, Color.Black),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.LightGray
+                                containerColor = Color.White
                             ),
                             modifier = Modifier
                                 .width(70.dp)
@@ -174,6 +181,45 @@ fun CreateConfigDialog(
                                 imageVector = Icons.AutoMirrored.Filled.Help,
                                 contentDescription = "Help"
                             )
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                            .align(Alignment.Center)
+                    ) {
+                        LazyColumn {
+                            items(fields) { field ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(70.dp)
+                                        .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(Color.White)
+                                        .padding(5.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier.align(Alignment.CenterStart)
+                                    ) {
+                                        Text(
+                                            text = field.name,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        if (field.category.isNotEmpty()) {
+                                            Text(
+                                                text = "Categories:  ${field.category.joinToString(", ")}",
+                                                color = Color.DarkGray,
+                                                fontSize = 12.sp,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                        }
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
                         }
                     }
 

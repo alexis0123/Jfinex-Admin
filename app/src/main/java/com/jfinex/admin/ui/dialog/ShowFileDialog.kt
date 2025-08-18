@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -72,42 +73,39 @@ fun ShowFileDialog(
                     Column(
                         Modifier
                             .fillMaxSize()
-                            .padding(16.dp)
+                            .padding(10.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 7.dp)
                         ) {
                             Text(
                                 text = "Number of Rows: ${rows.size}",
                                 fontWeight = FontWeight.Bold
                             )
                         }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Block",
+                                modifier = Modifier.weight(0.3f),
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Name",
+                                modifier = Modifier.weight(1f),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        HorizontalDivider(color = Color.Black)
                         LazyColumn {
-                            item {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 7.dp)
-                                ) {
-                                    Text(
-                                        text = "Block",
-                                        modifier = Modifier.weight(0.3f),
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = "Name",
-                                        modifier = Modifier.weight(1f),
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            }
                             items(rows) { row ->
                                 Row(
                                     Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
+                                        .padding(vertical = 5.dp)
                                 ) {
                                     row.forEachIndexed { index, item ->
                                         val weight = if (index == 0) 0.3f else 1f

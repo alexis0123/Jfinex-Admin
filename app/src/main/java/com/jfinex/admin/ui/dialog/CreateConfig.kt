@@ -67,6 +67,12 @@ fun CreateConfigDialog(
         }
     }
 
+    if (showFile) {
+        ShowFileDialog(
+            onDismiss = { showFile = false }
+        )
+    }
+
     Dialog(onDismissRequest = {}) {
         Surface(
             modifier = Modifier

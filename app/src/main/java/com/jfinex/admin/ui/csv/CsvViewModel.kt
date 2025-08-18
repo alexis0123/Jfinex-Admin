@@ -15,8 +15,11 @@ import javax.inject.Inject
 @HiltViewModel
 class CsvViewModel @Inject constructor(private val repo: CsvRepository) : ViewModel() {
 
-    private val _rows = MutableStateFlow<List<List<String>>>(emptyList())
-    val rows = _rows.asStateFlow()
+    private val _validRows = MutableStateFlow<List<List<String>>>(emptyList())
+    val validRows = _validRows.asStateFlow()
+
+    private val _ignoredRows = MutableStateFlow<List<List<String>>>(emptyList())
+    val ignoredRows = _ignoredRows.asStateFlow()
 
     private val _fileName = MutableStateFlow<String?>(null)
     val fileName = _fileName.asStateFlow()
@@ -40,7 +43,8 @@ class CsvViewModel @Inject constructor(private val repo: CsvRepository) : ViewMo
 
             try {
                 val parsed = repo.readCsvFromUri(contentResolver, uri)
-                _rows.value = parsed
+                _validRows.value = parsed.valid
+                _ignoredRows.value = parsed.ignored
                 _fileName.value = repo.getFileName(contentResolver, uri)
                 _hasFile.value = true
             } catch (e: Exception) {
@@ -52,7 +56,8 @@ class CsvViewModel @Inject constructor(private val repo: CsvRepository) : ViewMo
     }
 
     fun clear() {
-        _rows.value = emptyList()
+        _validRows.value = emptyList()
+        _ignoredRows.value = emptyList()
         _fileName.value = null
         _error.value = null
         _hasFile.value = false

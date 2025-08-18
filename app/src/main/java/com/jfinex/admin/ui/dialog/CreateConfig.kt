@@ -199,23 +199,35 @@ fun CreateConfigDialog(
                                         .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
                                         .clip(RoundedCornerShape(10.dp))
                                         .background(Color.White)
-                                        .padding(5.dp)
+                                        .padding(horizontal = 10.dp, vertical = 6.dp)
                                 ) {
-                                    Column(
-                                        modifier = Modifier.align(Alignment.CenterStart)
+                                    Row(
+                                        modifier = Modifier.fillMaxSize(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(
-                                            text = field.name,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        if (field.category.isNotEmpty()) {
+                                        Column {
                                             Text(
-                                                text = "Categories:  ${field.category.joinToString(", ")}",
-                                                color = Color.DarkGray,
-                                                fontSize = 12.sp,
-                                                overflow = TextOverflow.Ellipsis
+                                                text = field.name,
+                                                fontWeight = FontWeight.Bold
                                             )
+                                            if (field.category.isNotEmpty()) {
+                                                Text(
+                                                    text = "Categories: ${field.category.joinToString(", ")}",
+                                                    color = Color.DarkGray,
+                                                    fontSize = 12.sp,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                            }
                                         }
+                                        Icon(
+                                            imageVector = Icons.Default.Cancel,
+                                            contentDescription = "Clear",
+                                            modifier = Modifier
+                                                .size(20.dp)
+                                                .clickable { fieldViewModel.removeField(field) }
+                                        )
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(10.dp))

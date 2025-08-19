@@ -141,12 +141,14 @@ fun CreateConfigDialog(
                                 Text(
                                     text = "$fileName",
                                     color = Color.Black,
+                                    overflow = TextOverflow.Ellipsis,
                                     modifier = Modifier.weight(1f)
                                 )
                                 Icon(
                                     imageVector = Icons.Default.Cancel,
                                     contentDescription = "Clear",
                                     modifier = Modifier
+                                        .size(25.dp)
                                         .padding(start = 6.dp)
                                         .clickable(onClick = { csvViewModel.clear() })
                                 )
@@ -196,7 +198,8 @@ fun CreateConfigDialog(
                                     Column {
                                         Text(
                                             text = field.name,
-                                            fontWeight = FontWeight.Bold
+                                            fontWeight = FontWeight.Bold,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                         if (field.category.isNotEmpty()) {
                                             Text(
@@ -257,7 +260,7 @@ fun CreateConfigDialog(
                         .height(50.dp)
                 ) {
                     Text(
-                        text = "Save & Exit",
+                        text = "Create Config",
                         color = Color.Black
                     )
                 }

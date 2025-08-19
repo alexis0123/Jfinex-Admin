@@ -76,6 +76,26 @@ fun AddFieldDialog(
                     )
                 )
 
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 50.dp, max = 180.dp)
+                        .padding(horizontal = 10.dp)
+                ) {
+                    if (categories.isEmpty()) {
+                        item {
+                            Text(
+                                text = "No category",
+                                color = Color.Gray
+                            )
+                        }
+                    }
+
+                    items(categories) {category ->
+                        Text(category)
+                    }
+                }
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,

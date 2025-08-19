@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -138,9 +139,24 @@ fun AddFieldDialog(
                     if (categories.size == 1) {
                         item {
                             Text(
-                                text = "You need atleast two categories",
+                                text = "You need atleast two categories" +
+                                        if (fieldNameText.isNotBlank()) " otherwise just name the Field"
+                                        else "",
                                 color = if (notEnoughCategory) Color.Red else Color.Gray
                             )
+                            if (fieldNameText.isNotBlank()) {
+                                Text(
+                                    text = "$fieldNameText (${categories[0]})",
+                                    color = if (notEnoughCategory) Color.Red else Color.Blue,
+                                    textDecoration = TextDecoration.Underline,
+                                    modifier = Modifier.clickable(
+                                        onClick = {
+                                            fieldNameText = "$fieldNameText (${categories[0]})"
+                                            categories -= categories[0]
+                                        }
+                                    )
+                                )
+                            }
                         }
                     }
                 }
@@ -215,8 +231,8 @@ fun AddFieldDialog(
                             else -> {
                                 viewModel.addField(
                                     Field(
-                                        name = fieldNameText,
-                                        category = categories
+                                        name = fieldNameText.trim(),
+                                        category = categories.map { it.trim() }
                                     )
                                 )
                                 onDismiss()

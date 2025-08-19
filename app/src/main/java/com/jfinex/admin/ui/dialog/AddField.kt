@@ -125,7 +125,10 @@ fun AddFieldDialog(
                     )
 
                     Button(
-                        onClick = {},
+                        onClick = {
+                            categories += categoryText
+                            categoryText = ""
+                        },
                         shape = RoundedCornerShape(10.dp),
                         border = BorderStroke(1.dp, Color.Black),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),

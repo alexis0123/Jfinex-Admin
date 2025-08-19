@@ -52,6 +52,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import com.jfinex.admin.ui.dialog.components.StyledCard
 
 @Composable
 fun CreateConfigDialog(
@@ -66,6 +67,7 @@ fun CreateConfigDialog(
     val fileName by csvViewModel.fileName.collectAsState()
     val loading by csvViewModel.loading.collectAsState()
     var showFile by remember { mutableStateOf(false) }
+    var showAddField by remember { mutableStateOf(false) }
     var showHelpCsv by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -80,215 +82,199 @@ fun CreateConfigDialog(
         )
     }
 
+    if (showAddField) {
+        AddFieldDialog(
+            onDismiss = { showAddField = false }
+        )
+    }
+
     Dialog(onDismissRequest = {}) {
-        Surface(
-            modifier = Modifier
-                .width(400.dp)
-                .height(500.dp),
-            color = MaterialTheme.colorScheme.background,
-            shape = RoundedCornerShape(15.dp),
-            border = BorderStroke(1.dp, Color.Black),
-            shadowElevation = 2.dp
-        ) {
-            Column(
+
+        StyledCard {
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 10.dp),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .height(360.dp)
+                    .width(285.dp)
+                    .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
+                    .padding(10.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .background(MaterialTheme.colorScheme.secondary)
-                ) {}
-
-                Box(
-                    modifier = Modifier
-                        .height(360.dp)
-                        .width(285.dp)
-                        .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
-                        .padding(10.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Button(
-                            onClick = {
-                                if (!hasFile) {
-                                    launcher.launch(
-                                        arrayOf(
-                                            "text/csv",
-                                            "application/csv",
-                                            "text/comma-separated-values"
-                                        )
-                                    )
-                                } else {
-                                    showFile = true
-                                }
-                            },
-                            shape = RoundedCornerShape(10.dp),
-                            border = BorderStroke(1.dp, Color.Black),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                            modifier = Modifier
-                                .width(190.dp)
-                                .height(50.dp)
-                        ) {
-                            when {
-                                loading -> {
-                                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
-                                }
-
-                                !hasFile -> {
-                                    Icon(
-                                        imageVector = Icons.Default.AttachFile,
-                                        contentDescription = "Attach",
-                                        modifier = Modifier.padding(end = 6.dp)
-                                    )
-                                    Text("Pick CSV File")
-                                }
-
-                                else -> {
-                                    Text(
-                                        text = "$fileName",
-                                        color = Color.Black,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Default.Cancel,
-                                        contentDescription = "Clear",
-                                        modifier = Modifier
-                                            .padding(start = 6.dp)
-                                            .clickable(onClick = { csvViewModel.clear() })
-                                    )
-                                }
-                            }
-                        }
-                        Button(
-                            onClick = { showHelpCsv = true },
-                            shape = RoundedCornerShape(10.dp),
-                            border = BorderStroke(1.dp, Color.Black),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White
-                            ),
-                            modifier = Modifier
-                                .width(70.dp)
-                                .height(50.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Help,
-                                contentDescription = "Help"
-                            )
-                        }
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(220.dp)
-                            .align(Alignment.Center)
-                    ) {
-                        LazyColumn {
-                            items(fields) { field ->
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(70.dp)
-                                        .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(Color.White)
-                                        .padding(horizontal = 10.dp, vertical = 6.dp)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxSize(),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
-                                        Column {
-                                            Text(
-                                                text = field.name,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                            if (field.category.isNotEmpty()) {
-                                                Text(
-                                                    text = "Categories: ${field.category.joinToString(", ")}",
-                                                    color = Color.DarkGray,
-                                                    fontSize = 12.sp,
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis
-                                                )
-                                            }
-                                        }
-                                        Icon(
-                                            imageVector = Icons.Default.Cancel,
-                                            contentDescription = "Clear",
-                                            modifier = Modifier
-                                                .size(20.dp)
-                                                .clickable { fieldViewModel.removeField(field) }
-                                        )
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(10.dp))
-                            }
-                        }
-                    }
-
                     Button(
-                        onClick = {},
+                        onClick = {
+                            if (!hasFile) {
+                                launcher.launch(
+                                    arrayOf(
+                                        "text/csv",
+                                        "application/csv",
+                                        "text/comma-separated-values"
+                                    )
+                                )
+                            } else {
+                                showFile = true
+                            }
+                        },
                         shape = RoundedCornerShape(10.dp),
                         border = BorderStroke(1.dp, Color.Black),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                         modifier = Modifier
-                            .width(200.dp)
+                            .width(190.dp)
                             .height(50.dp)
-                            .align(Alignment.BottomCenter)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add",
-                            modifier = Modifier.padding(end = 4.dp)
-                        )
-                        Text(
-                            text = " Add Field",
-                            color = Color.Black
-                        )
-                    }
-                }
+                        when {
+                            loading -> {
+                                CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                            }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
+                            !hasFile -> {
+                                Icon(
+                                    imageVector = Icons.Default.AttachFile,
+                                    contentDescription = "Attach",
+                                    modifier = Modifier.padding(end = 6.dp)
+                                )
+                                Text("Pick CSV File")
+                            }
+
+                            else -> {
+                                Text(
+                                    text = "$fileName",
+                                    color = Color.Black,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.Cancel,
+                                    contentDescription = "Clear",
+                                    modifier = Modifier
+                                        .padding(start = 6.dp)
+                                        .clickable(onClick = { csvViewModel.clear() })
+                                )
+                            }
+                        }
+                    }
                     Button(
-                        onClick = {},
+                        onClick = { showHelpCsv = true },
                         shape = RoundedCornerShape(10.dp),
                         border = BorderStroke(1.dp, Color.Black),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White
+                        ),
                         modifier = Modifier
-                            .width(160.dp)
+                            .width(70.dp)
                             .height(50.dp)
                     ) {
-                        Text(
-                            text = "Save & Exit",
-                            color = Color.Black
-                        )
-                    }
-                    OutlinedButton(
-                        onClick = onDismiss,
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier
-                            .width(110.dp)
-                            .height(50.dp)
-                    ) {
-                        Text(
-                            text = "Cancel",
-                            color = Color.Black
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Help,
+                            contentDescription = "Help"
                         )
                     }
                 }
 
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .align(Alignment.Center)
+                ) {
+                    LazyColumn {
+                        items(fields) { field ->
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(70.dp)
+                                    .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color.White)
+                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column {
+                                        Text(
+                                            text = field.name,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        if (field.category.isNotEmpty()) {
+                                            Text(
+                                                text = "Categories: ${field.category.joinToString(", ")}",
+                                                color = Color.DarkGray,
+                                                fontSize = 12.sp,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                        }
+                                    }
+                                    Icon(
+                                        imageVector = Icons.Default.Cancel,
+                                        contentDescription = "Clear",
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .clickable { fieldViewModel.removeField(field) }
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                    }
+                }
+
+                Button(
+                    onClick = { showAddField = true },
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, Color.Black),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(50.dp)
+                        .align(Alignment.BottomCenter)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add",
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+                    Text(
+                        text = " Add Field",
+                        color = Color.Black
+                    )
+                }
             }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    onClick = {},
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, Color.Black),
+                    modifier = Modifier
+                        .width(160.dp)
+                        .height(50.dp)
+                ) {
+                    Text(
+                        text = "Save & Exit",
+                        color = Color.Black
+                    )
+                }
+                OutlinedButton(
+                    onClick = onDismiss,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .width(110.dp)
+                        .height(50.dp)
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = Color.Black
+                    )
+                }
+            }
+
         }
     }
 }

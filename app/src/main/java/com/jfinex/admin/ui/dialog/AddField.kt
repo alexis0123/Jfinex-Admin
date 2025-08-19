@@ -43,6 +43,7 @@ fun AddFieldDialog(
 ) {
     var fieldNameText by remember { mutableStateOf("") }
     var categoryText by remember { mutableStateOf("") }
+    var categories by remember { mutableStateOf(emptyList<String>()) }
 
     Dialog(onDismissRequest = {}) {
         StyledCard {

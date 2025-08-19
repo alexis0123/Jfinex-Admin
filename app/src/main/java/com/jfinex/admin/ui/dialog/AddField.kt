@@ -2,6 +2,7 @@ package com.jfinex.admin.ui.dialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,13 +11,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Dehaze
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -31,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,6 +55,8 @@ fun AddFieldDialog(
     var fieldNameText by remember { mutableStateOf("") }
     var categoryText by remember { mutableStateOf("") }
     var categories by remember { mutableStateOf(emptyList<String>()) }
+    var emptyFieldNameWarning by remember { mutableStateOf(false) }
+    var notEnoughCategory by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = {}) {
         StyledCard {
@@ -59,7 +70,10 @@ fun AddFieldDialog(
             ) {
                 OutlinedTextField(
                     value = fieldNameText,
-                    onValueChange = { fieldNameText = it },
+                    onValueChange = {
+                        fieldNameText = it
+                        if (emptyFieldNameWarning == true) emptyFieldNameWarning = false
+                    },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
                     label = { Text("Field Name") },
@@ -79,22 +93,55 @@ fun AddFieldDialog(
                 )
 
                 LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 50.dp, max = 180.dp)
-                        .padding(horizontal = 10.dp)
+                        .height(180.dp)
+                        .padding(start = 10.dp)
                 ) {
+                    if (fieldNameText.isEmpty()) {
+                        item {
+                            Text(
+                                text = "Field Name is Required",
+                                color = if (emptyFieldNameWarning)Color.Red else Color.Gray
+                            )
+                        }
+                    }
                     if (categories.isEmpty()) {
                         item {
                             Text(
-                                text = "No category",
+                                text = "Add category (Optional)",
                                 color = Color.Gray
                             )
                         }
                     }
-
                     items(categories) {category ->
-                        Text(category)
+                        Row(modifier = Modifier.height(30.dp)) {
+                            Text(
+                                text = "• $category",
+                                modifier = Modifier.weight(0.6f),
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Icon(
+                                imageVector = Icons.Default.Cancel,
+                                contentDescription = "Close",
+                                modifier = Modifier
+                                    .weight(0.2f)
+                                    .size(20.dp)
+                                    .clickable(onClick = {
+                                        categories -= category
+                                    })
+                            )
+                        }
+                        HorizontalDivider(color = Color.Gray)
+                    }
+                    if (categories.size == 1) {
+                        item {
+                            Text(
+                                text = "You need atleast two categories",
+                                color = if (notEnoughCategory) Color.Red else Color.Gray
+                            )
+                        }
                     }
                 }
 
@@ -128,8 +175,11 @@ fun AddFieldDialog(
 
                     Button(
                         onClick = {
-                            categories += categoryText
-                            categoryText = ""
+                            if (categoryText.isNotBlank()) {
+                                categories += categoryText
+                                categoryText = ""
+                                if (notEnoughCategory == true) notEnoughCategory = false
+                            }
                         },
                         shape = RoundedCornerShape(10.dp),
                         border = BorderStroke(1.dp, Color.Black),
@@ -153,14 +203,26 @@ fun AddFieldDialog(
             ) {
                 Button(
                     onClick = {
-                        viewModel.addField(Field(
-                            name = fieldNameText,
-                            category = categories
-                        ))
-                        onDismiss()
+                        when {
+                            fieldNameText.isEmpty() -> {
+                                emptyFieldNameWarning = true
+                            }
+
+                            categories.isNotEmpty() && categories.size == 1 -> {
+                                notEnoughCategory = true
+                            }
+
+                            else -> {
+                                viewModel.addField(
+                                    Field(
+                                        name = fieldNameText,
+                                        category = categories
+                                    )
+                                )
+                                onDismiss()
+                            }
+                        }
                     },
-                    enabled = fieldNameText.isNotBlank() && categories.size > 1
-                            || fieldNameText.isNotBlank() && categories.isEmpty(),
                     shape = RoundedCornerShape(10.dp),
                     border = BorderStroke(1.dp, Color.Black),
                     modifier = Modifier

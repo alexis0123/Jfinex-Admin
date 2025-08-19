@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextDecoration
@@ -146,10 +147,12 @@ fun AddFieldDialog(
                             )
                             if (fieldNameText.isNotBlank()) {
                                 Text(
-                                    text = "$fieldNameText (${categories[0]})",
+                                    text = "$fieldNameText (${categories[0]}).",
                                     color = if (notEnoughCategory) Color.Red else Color.Blue,
                                     textDecoration = TextDecoration.Underline,
-                                    modifier = Modifier.clickable(
+                                    modifier = Modifier
+                                        .alpha(0.5f)
+                                        .clickable(
                                         onClick = {
                                             fieldNameText = "$fieldNameText (${categories[0]})"
                                             categories -= categories[0]

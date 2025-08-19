@@ -150,7 +150,15 @@ fun AddFieldDialog(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(
-                    onClick = {},
+                    onClick = {
+                        viewModel.addField(Field(
+                            name = fieldNameText,
+                            category = categories
+                        ))
+                        onDismiss()
+                    },
+                    enabled = fieldNameText.isNotBlank() && categories.size > 1
+                            || fieldNameText.isNotBlank() && categories.isEmpty(),
                     shape = RoundedCornerShape(10.dp),
                     border = BorderStroke(1.dp, Color.Black),
                     modifier = Modifier

@@ -69,6 +69,7 @@ fun CreateConfigDialog(
     var showFile by remember { mutableStateOf(false) }
     var showAddField by remember { mutableStateOf(false) }
     var showHelpCsv by remember { mutableStateOf(false) }
+    var emptyCsvWarning by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let {
@@ -112,6 +113,7 @@ fun CreateConfigDialog(
                                         "text/comma-separated-values"
                                     )
                                 )
+                                if (emptyCsvWarning) emptyCsvWarning = false
                             } else {
                                 showFile = true
                             }
@@ -180,6 +182,16 @@ fun CreateConfigDialog(
                         .align(Alignment.Center)
                 ) {
                     LazyColumn {
+                        if (!hasFile) {
+                            item {
+                                Box(modifier = Modifier.fillMaxWidth().padding(start = 10.dp)) {
+                                    Text(
+                                        text = "Students list is Required",
+                                        color = if (emptyCsvWarning) Color.Red else Color.Gray
+                                    )
+                                }
+                            }
+                        }
                         items(fields) { field ->
                             Box(
                                 modifier = Modifier
@@ -252,7 +264,9 @@ fun CreateConfigDialog(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(
-                    onClick = {},
+                    onClick = {
+                        if (!hasFile) emptyCsvWarning = true
+                    },
                     shape = RoundedCornerShape(10.dp),
                     border = BorderStroke(1.dp, Color.Black),
                     modifier = Modifier

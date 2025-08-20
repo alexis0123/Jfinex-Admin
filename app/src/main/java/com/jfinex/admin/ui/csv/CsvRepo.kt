@@ -30,10 +30,8 @@ class CsvRepository @Inject constructor() {
                             rowPattern.matches(nextLine[0].trim()) &&
                             nextLine[1].isNotBlank()
                         ) {
-                            // Keep only first + second cell
                             validRows.add(listOf(nextLine[0].trim(), nextLine[1].trim()))
                         } else {
-                            // Still keep first + second if possible, else empty placeholders
                             val cell1 = nextLine.getOrNull(0)?.trim().orEmpty()
                             val cell2 = nextLine.getOrNull(1)?.trim().orEmpty()
                             ignoredRows.add(listOf(cell1, cell2))

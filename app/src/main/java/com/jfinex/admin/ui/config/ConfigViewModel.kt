@@ -33,7 +33,7 @@ class ConfigViewModel @Inject constructor(
                 if (students.isEmpty()) throw IllegalStateException("No students to export")
 
                 val config = configRepo.buildConfig(students)
-                val json = Json { prettyPrint = true }
+                val json = Json { prettyPrint = false }
                     .encodeToString(ConfigExport.serializer(), config)
 
                 Log.d("ConfigExport", "JSON length=${json.length}\n$json")
@@ -47,5 +47,8 @@ class ConfigViewModel @Inject constructor(
                 _exportResult.value = Result.failure(e)
             }
         }
+    }
+    fun reset() {
+        _exportResult.value = null
     }
 }

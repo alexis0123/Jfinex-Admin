@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.ui.csv.CsvViewModel
 import com.jfinex.admin.ui.field.FieldViewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -81,12 +82,31 @@ fun CreateConfigDialog(
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json"),
         onResult = { uri ->
-            uri?.let {
+            if (uri != null) {
                 val snapshot = csvViewModel.validRows.value.toList()
-                configViewModel.exportConfig(context.contentResolver, it, snapshot)
+                configViewModel.exportConfig(context.contentResolver, uri, snapshot)
+            } else {
+                Toast.makeText(context, "Export cancelled", Toast.LENGTH_SHORT).show()
             }
         }
     )
+
+// Collect the export result
+    val exportResult by configViewModel.exportResult.collectAsState()
+
+    LaunchedEffect(exportResult) {
+        exportResult?.let { result ->
+            result.onSuccess {
+                Toast.makeText(context, "Successfully exported!", Toast.LENGTH_LONG).show()
+                onDismiss()
+                fieldViewModel.reset()
+            }.onFailure { e ->
+                Toast.makeText(context, "Failed to export: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+            // Reset after handling
+            configViewModel.reset()
+        }
+    }
 
     if (showFile) {
         ShowFile(

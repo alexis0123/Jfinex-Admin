@@ -227,7 +227,7 @@ fun AddFieldDialog(
                                 emptyFieldNameWarning = true
                             }
 
-                            categories.isNotEmpty() && categories.size == 1 -> {
+                            categories.size == 1 -> {
                                 notEnoughCategory = true
                             }
 

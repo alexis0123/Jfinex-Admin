@@ -59,6 +59,7 @@ fun AddFieldDialog(
     var categories by remember { mutableStateOf(emptyList<String>()) }
     var emptyFieldNameWarning by remember { mutableStateOf(false) }
     var notEnoughCategory by remember { mutableStateOf(false) }
+    var fieldNameAlreadyExist by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = {}) {
         StyledCard {
@@ -74,7 +75,8 @@ fun AddFieldDialog(
                     value = fieldNameText,
                     onValueChange = {
                         fieldNameText = it
-                        if (emptyFieldNameWarning == true) emptyFieldNameWarning = false
+                        if (emptyFieldNameWarning) emptyFieldNameWarning = false
+                        if (fieldNameAlreadyExist) fieldNameAlreadyExist = false
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
@@ -101,13 +103,21 @@ fun AddFieldDialog(
                         .height(180.dp)
                         .padding(start = 10.dp)
                 ) {
-                    if (fieldNameText.isEmpty()) {
-                        item {
-                            Text(
-                                text = "Field Name is Required",
-                                color = if (emptyFieldNameWarning)Color.Red else Color.Gray
-                            )
-                        }
+                    when {
+                        fieldNameText.isEmpty() ->
+                            item {
+                                Text(
+                                    text = "Field Name is Required",
+                                    color = if (emptyFieldNameWarning)Color.Red else Color.Gray
+                                )
+                            }
+                        fieldNameAlreadyExist ->
+                            item {
+                                Text(
+                                    text = "$fieldNameText already exists",
+                                    color = Color.Red
+                                )
+                            }
                     }
                     if (categories.isEmpty()) {
                         item {
@@ -230,6 +240,9 @@ fun AddFieldDialog(
                             categories.size == 1 -> {
                                 notEnoughCategory = true
                             }
+
+                            fieldNameText in viewModel.fields.value.map { it.name } ->
+                                fieldNameAlreadyExist = true
 
                             else -> {
                                 viewModel.addField(

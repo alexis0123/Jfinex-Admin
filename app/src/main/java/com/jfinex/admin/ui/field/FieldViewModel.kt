@@ -21,4 +21,9 @@ class FieldViewModel @Inject constructor(private val repo: FieldsRepository): Vi
         _fields.value -= field
     }
 
+    fun reset() {
+        repo.reset()
+        _fields.value = emptyList()
+    }
+
 }

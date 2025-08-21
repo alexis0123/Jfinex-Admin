@@ -16,5 +16,6 @@ class FieldsRepository @Inject constructor() {
 
     fun addField(field: Field) = fields.add(field)
     fun removeField(field: Field) = fields.remove(field)
+    fun reset() = fields.clear()
 
 }

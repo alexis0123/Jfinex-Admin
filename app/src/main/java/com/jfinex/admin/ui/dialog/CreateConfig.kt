@@ -72,6 +72,7 @@ fun CreateConfigDialog(
     var showAddField by remember { mutableStateOf(false) }
     var showHelpCsv by remember { mutableStateOf(false) }
     var emptyCsvWarning by remember { mutableStateOf(false) }
+    var emptyFieldWarning by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let {
@@ -225,6 +226,18 @@ fun CreateConfigDialog(
                                 }
                             }
                         }
+                        if (fields.isEmpty()) {
+                            item {
+                                Box(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 10.dp)) {
+                                    Text(
+                                        text = "Add atleast one field",
+                                        color = if (emptyFieldWarning) Color.Red else Color.Gray
+                                    )
+                                }
+                            }
+                        }
                         items(fields) { field ->
                             Box(
                                 modifier = Modifier
@@ -271,7 +284,10 @@ fun CreateConfigDialog(
                 }
 
                 Button(
-                    onClick = { showAddField = true },
+                    onClick = {
+                        showAddField = true
+                        if (emptyFieldWarning) emptyFieldWarning = false
+                    },
                     shape = RoundedCornerShape(10.dp),
                     border = BorderStroke(1.dp, Color.Black),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White),
@@ -300,9 +316,7 @@ fun CreateConfigDialog(
                     onClick = {
                         when {
                             !hasFile -> emptyCsvWarning = true
-                            !configViewModel.configRepo.hasFields() -> {
-                                Toast.makeText(context, "Add at least one field before export", Toast.LENGTH_SHORT).show()
-                            }
+                            !configViewModel.configRepo.hasFields() -> emptyFieldWarning = true
                             else -> exportLauncher.launch("Config.json")
                         }
                     },

@@ -21,7 +21,7 @@ import com.jfinex.admin.ui.dialog.CreateConfigDialog
 @Composable
 fun OptionsMenu() {
     var expanded by remember { mutableStateOf(false) }
-    var showCreateConfig by remember { mutableStateOf(true) }
+    var showCreateConfig by remember { mutableStateOf(false) }
 
     if (showCreateConfig) {
         CreateConfigDialog(

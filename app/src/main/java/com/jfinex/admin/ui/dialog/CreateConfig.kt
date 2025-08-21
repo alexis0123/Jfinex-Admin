@@ -1,5 +1,6 @@
 package com.jfinex.admin.ui.dialog
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -28,9 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -52,13 +51,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import com.jfinex.admin.ui.config.ConfigViewModel
 import com.jfinex.admin.ui.dialog.components.StyledCard
 
 @Composable
 fun CreateConfigDialog(
     onDismiss: () -> Unit,
     csvViewModel: CsvViewModel = hiltViewModel(),
-    fieldViewModel: FieldViewModel = hiltViewModel()
+    fieldViewModel: FieldViewModel = hiltViewModel(),
+    configViewModel: ConfigViewModel = hiltViewModel()
 ) {
     val fields by fieldViewModel.fields.collectAsState()
 
@@ -76,6 +77,16 @@ fun CreateConfigDialog(
             csvViewModel.loadCsv(context.contentResolver, it)
         }
     }
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json"),
+        onResult = { uri ->
+            uri?.let {
+                val snapshot = csvViewModel.validRows.value.toList()
+                configViewModel.exportConfig(context.contentResolver, it, snapshot)
+            }
+        }
+    )
 
     if (showFile) {
         ShowFile(
@@ -184,7 +195,9 @@ fun CreateConfigDialog(
                     LazyColumn {
                         if (!hasFile) {
                             item {
-                                Box(modifier = Modifier.fillMaxWidth().padding(start = 10.dp)) {
+                                Box(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 10.dp)) {
                                     Text(
                                         text = "Students list is Required",
                                         color = if (emptyCsvWarning) Color.Red else Color.Gray
@@ -265,7 +278,13 @@ fun CreateConfigDialog(
             ) {
                 Button(
                     onClick = {
-                        if (!hasFile) emptyCsvWarning = true
+                        when {
+                            !hasFile -> emptyCsvWarning = true
+                            !configViewModel.configRepo.hasFields() -> {
+                                Toast.makeText(context, "Add at least one field before export", Toast.LENGTH_SHORT).show()
+                            }
+                            else -> exportLauncher.launch("Config.json")
+                        }
                     },
                     shape = RoundedCornerShape(10.dp),
                     border = BorderStroke(1.dp, Color.Black),
@@ -273,10 +292,7 @@ fun CreateConfigDialog(
                         .width(160.dp)
                         .height(50.dp)
                 ) {
-                    Text(
-                        text = "Create Config",
-                        color = Color.Black
-                    )
+                    Text("Create Config", color = Color.Black)
                 }
                 OutlinedButton(
                     onClick = onDismiss,

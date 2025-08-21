@@ -2,6 +2,7 @@ package com.jfinex.admin.ui.field
 
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @Serializable
 data class Field(
@@ -9,6 +10,7 @@ data class Field(
     val category: List<String> = emptyList()
 )
 
+@Singleton
 class FieldsRepository @Inject constructor() {
     val fields = mutableListOf<Field>()
 

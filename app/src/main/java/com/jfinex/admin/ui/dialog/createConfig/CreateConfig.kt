@@ -52,7 +52,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import com.jfinex.admin.ui.config.ConfigViewModel
+import com.jfinex.admin.ui.config.export.ConfigViewModel
 import com.jfinex.admin.ui.dialog.components.StyledCard
 
 @Composable

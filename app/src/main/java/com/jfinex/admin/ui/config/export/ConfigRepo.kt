@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.config
+package com.jfinex.admin.ui.config.export
 
 import javax.inject.Inject
 import com.jfinex.admin.ui.field.FieldsRepository

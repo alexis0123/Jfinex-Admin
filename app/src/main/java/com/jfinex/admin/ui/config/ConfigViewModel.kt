@@ -2,9 +2,10 @@ package com.jfinex.admin.ui.config
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfinex.admin.ui.config.components.ConfigExport
+import com.jfinex.admin.ui.config.components.xor.xorEn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,10 +34,8 @@ class ConfigViewModel @Inject constructor(
                 if (students.isEmpty()) throw IllegalStateException("No students to export")
 
                 val config = configRepo.buildConfig(students)
-                val json = Json { prettyPrint = false }
-                    .encodeToString(ConfigExport.serializer(), config)
-
-                Log.d("ConfigExport", "JSON length=${json.length}\n$json")
+                val json = xorEn(Json { prettyPrint = false }
+                    .encodeToString(ConfigExport.serializer(), config))
 
                 contentResolver.openOutputStream(uri)?.use { outputStream ->
                     outputStream.write(json.toByteArray())

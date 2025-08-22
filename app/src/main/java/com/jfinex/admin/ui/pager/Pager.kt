@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.jfinex.admin.R
-import com.jfinex.admin.ui.pager.page.CollectionPage
+import com.jfinex.admin.ui.pager.page.collection.CollectionPage
 import com.jfinex.admin.ui.pager.page.RecentPage
 
 @OptIn(ExperimentalFoundationApi::class)

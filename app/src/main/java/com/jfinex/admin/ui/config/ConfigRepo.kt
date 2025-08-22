@@ -1,7 +1,5 @@
 package com.jfinex.admin.ui.config
 
-import com.jfinex.admin.ui.config.components.ConfigExport
-import com.jfinex.admin.ui.config.components.StudentConfig
 import javax.inject.Inject
 import com.jfinex.admin.ui.field.FieldsRepository
 

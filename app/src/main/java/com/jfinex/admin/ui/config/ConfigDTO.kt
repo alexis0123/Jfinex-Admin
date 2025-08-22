@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.config.components
+package com.jfinex.admin.ui.config
 
 import kotlinx.serialization.Serializable
 

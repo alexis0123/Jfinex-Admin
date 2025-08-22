@@ -3,6 +3,7 @@ package com.jfinex.admin.data.local
 import android.app.Application
 import androidx.room.Room
 import com.jfinex.admin.data.local.collection.CollectionDao
+import com.jfinex.admin.data.local.fields.FieldDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,11 +22,14 @@ object DatabaseModule {
             AppDatabase::class.java,
             "jfinex_admin_db"
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 
     @Provides
     fun providesCollectionDao(db: AppDatabase): CollectionDao = db.collectionDao()
+
+    @Provides
+    fun providesFieldDao(db: AppDatabase): FieldDao = db.fieldDao()
 
 }

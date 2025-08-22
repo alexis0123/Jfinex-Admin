@@ -1,5 +1,7 @@
 package com.jfinex.admin.ui.config
 
+import com.jfinex.admin.ui.config.components.ConfigExport
+import com.jfinex.admin.ui.config.components.StudentConfig
 import javax.inject.Inject
 import com.jfinex.admin.ui.field.FieldsRepository
 
@@ -19,16 +21,22 @@ class ConfigRepository @Inject constructor(
         if (fields.isEmpty()) throw IllegalStateException("No fields added. Add at least one field before export.")
         if (students.isEmpty()) throw IllegalStateException("CSV has no valid students.")
 
-        val studentsWithRN = receiptRepo.generateReceiptNo(
+        val (studentsList, newBases) = receiptRepo.generateReceiptNo(
             studentsList = students,
             fields = fields.keys.toList()
-        ).associate { student ->
+        )
+
+        val studentsWithRN = studentsList.associate { student ->
             student.name to StudentConfig(
                 block = student.block,
                 receipts = student.receiptNumbers
             )
         }
 
-        return ConfigExport(fields, studentsWithRN)
+        return ConfigExport(
+            newBaseNumbers = newBases,
+            fields = fields,
+            studentsWithReceiptNumber = studentsWithRN
+        )
     }
 }

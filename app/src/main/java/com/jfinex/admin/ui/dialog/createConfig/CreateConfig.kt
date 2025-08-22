@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.dialog
+package com.jfinex.admin.ui.dialog.createConfig
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult

@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.config.export
+package com.jfinex.admin.ui.config.exportConfig
 
 import android.content.ContentResolver
 import android.net.Uri

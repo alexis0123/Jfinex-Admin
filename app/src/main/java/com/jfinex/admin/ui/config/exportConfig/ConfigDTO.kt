@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:app/src/main/java/com/jfinex/admin/ui/config/ConfigDTO.kt
-package com.jfinex.admin.ui.config
-========
-package com.jfinex.admin.ui.config.export
->>>>>>>> 2470641 (refactor):app/src/main/java/com/jfinex/admin/ui/config/export/ConfigDTO.kt
+package com.jfinex.admin.ui.config.exportConfig
 
 import kotlinx.serialization.Serializable
 

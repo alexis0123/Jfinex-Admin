@@ -18,6 +18,7 @@ fun CollectionTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
+    isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
@@ -25,24 +26,27 @@ fun CollectionTextField(
         onValueChange = onValueChange,
         placeholder = { Text(placeholder) },
         singleLine = true,
+        enabled = isEnabled,
         modifier = modifier,
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Words
         ),
         shape = RoundedCornerShape(10.dp),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            disabledContainerColor = Color.Transparent,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            disabledContainerColor = Color.White,
             focusedIndicatorColor = MaterialTheme.colorScheme.secondary,
             unfocusedIndicatorColor = Color.DarkGray,
+            disabledIndicatorColor = Color.Black,
             focusedLabelColor = MaterialTheme.colorScheme.secondary,
             unfocusedLabelColor = Color.DarkGray,
             cursorColor = MaterialTheme.colorScheme.secondary,
             focusedPlaceholderColor = Color.Gray,
             unfocusedPlaceholderColor = Color.Gray,
             focusedTextColor = Color.Black,
-            unfocusedTextColor = Color.Black
+            unfocusedTextColor = Color.Black,
+            disabledTextColor = Color.Black
         )
     )
 }

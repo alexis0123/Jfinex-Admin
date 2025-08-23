@@ -47,6 +47,7 @@ fun CollectionPage(
     val fields by fieldViewModel.fields.collectAsState()
     val selectedFields by fieldViewModel.selectedFields.collectAsState()
     var showResults by remember { mutableStateOf(false) }
+    var studentIsSelected by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
 
@@ -95,6 +96,7 @@ fun CollectionPage(
                             studentViewModel.updateBlock(it.take(2).uppercase())
                         },
                         placeholder = "ex,1B",
+                        isEnabled = !studentIsSelected,
                         modifier = Modifier.weight(0.65f)
                     )
                 }
@@ -122,6 +124,7 @@ fun CollectionPage(
                                 onClick = {
                                     studentViewModel.updateBlock("")
                                     studentViewModel.updateQuery("")
+                                    studentIsSelected = false
                                 }
                             )
                         )
@@ -133,6 +136,7 @@ fun CollectionPage(
                             showResults = it.isNotBlank()
                         },
                         placeholder = "e.g., Dela Cruz, Juan",
+                        isEnabled = !studentIsSelected,
                         modifier = Modifier.weight(0.65f)
                     )
                 }
@@ -292,6 +296,7 @@ fun CollectionPage(
                                         studentViewModel.updateQuery(student.name)
                                         studentViewModel.updateBlock(student.block)
                                         focusManager.clearFocus()
+                                        studentIsSelected = true
                                         showResults = false
                                     }
                             ) {
@@ -315,6 +320,5 @@ fun CollectionPage(
                 }
             }
         }
-
     }
 }

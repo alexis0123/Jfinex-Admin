@@ -3,12 +3,13 @@ package com.jfinex.admin.data.local.students
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StudentDao {
 
     @Query("SELECT * FROM students")
-    suspend fun getStudents(): List<Student>
+    fun getStudents(): Flow<List<Student>>
 
     @Insert
     suspend fun insert(student: Student)

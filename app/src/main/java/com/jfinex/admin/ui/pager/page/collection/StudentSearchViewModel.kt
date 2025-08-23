@@ -20,7 +20,7 @@ class StudentSearchViewModel @Inject constructor(
     private val studentRepo: StudentRepository
 ) : ViewModel() {
 
-    private val allStudents = MutableStateFlow<List<Student>>(emptyList())
+    private val allStudents = studentRepo.getAll()
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
@@ -30,14 +30,6 @@ class StudentSearchViewModel @Inject constructor(
 
     private val _studentIsSelected = MutableStateFlow(false)
     val studentIsSelected: StateFlow<Boolean> = _studentIsSelected
-
-
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            allStudents.value = studentRepo.getAll()
-        }
-    }
 
     val results: StateFlow<List<Student>> =
         combine(_query, _blockFilter, allStudents) { query, block, students ->

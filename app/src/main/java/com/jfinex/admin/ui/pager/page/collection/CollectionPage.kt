@@ -1,48 +1,35 @@
 package com.jfinex.admin.ui.pager.page.collection
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
 
 @Composable
-fun CollectionPage() {
+fun CollectionPage(
+    viewModel: StudentSearchViewModel = hiltViewModel()
+) {
+    val block by viewModel.blockFilter.collectAsState()
+    val name by viewModel.query.collectAsState()
+    val results by viewModel.results.collectAsState()
 
-    var blockTextValue by remember { mutableStateOf("") }
-    var nameTextValue by remember { mutableStateOf("") }
+    var showResults by remember { mutableStateOf(false) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
+    // detect clicks outside the lazy column to dismiss
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -51,55 +38,90 @@ fun CollectionPage() {
             verticalArrangement = Arrangement.spacedBy(15.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box {
-                Text(
-                    text = "Collection Entry",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp
-                )
-                Text(
-                    text = "Collection Entry",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp,
-                    modifier = Modifier.offset(1.dp, 1.dp)
-                )
-            }
+            Text("Collection Entry", fontWeight = FontWeight.Bold, fontSize = 25.sp)
+
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(85.dp),
+                modifier = Modifier.fillMaxWidth().height(85.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(modifier = Modifier
-                    .weight(0.25f)
-                    .fillMaxHeight()){
-                    Text(
-                        text = "   Block",
-                        modifier = Modifier.weight(0.35f),
-                        fontWeight = FontWeight.Bold
-                    )
+                Column(
+                    modifier = Modifier.weight(0.25f).fillMaxHeight()
+                ) {
+                    Text("   Block", fontWeight = FontWeight.Bold)
                     CollectionTextField(
-                        value = blockTextValue,
-                        onValueChange = { blockTextValue = it.take(2).uppercase() },
+                        value = block ?: "",
+                        onValueChange = {
+                            viewModel.updateBlock(it.take(2).uppercase())
+                        },
                         placeholder = "1B",
                         modifier = Modifier.weight(0.65f)
                     )
                 }
                 Spacer(modifier = Modifier.weight(0.02f))
-                Column(modifier = Modifier
-                    .weight(0.73f)
-                    .fillMaxHeight()){
-                    Text(
-                        text = "   Student Name",
-                        modifier = Modifier.weight(0.35f),
-                        fontWeight = FontWeight.Bold
-                    )
+                Column(
+                    modifier = Modifier.weight(0.73f).fillMaxHeight()
+                ) {
+                    Text("   Student Name", fontWeight = FontWeight.Bold)
                     CollectionTextField(
-                        value = nameTextValue,
-                        onValueChange = { nameTextValue = it },
+                        value = name,
+                        onValueChange = {
+                            viewModel.updateQuery(it)
+                            showResults = it.isNotBlank()
+                        },
                         placeholder = "Dela Cruz, Juan",
                         modifier = Modifier.weight(0.65f)
                     )
+                }
+            }
+        }
+
+        // Lazy list overlay
+        if (showResults && results.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 25.dp)
+                    .offset(y = 150.dp)
+                    .wrapContentHeight()
+            ) {
+                Surface(
+                    shadowElevation = 4.dp,
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 45.dp)
+                        .heightIn(max = 400.dp)
+                ) {
+                    LazyColumn {
+                        items(results) { student ->
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                    .clickable {
+                                        viewModel.updateQuery(student.name)
+                                        viewModel.updateBlock(student.block)
+                                        showResults = false
+                                    }
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(60.dp),
+                                    modifier = Modifier.padding(horizontal = 10.dp)
+                                ) {
+                                    Text(
+                                        text = student.block,
+                                        color = Color.Gray
+                                    )
+                                    Text(
+                                        text = student.name,
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

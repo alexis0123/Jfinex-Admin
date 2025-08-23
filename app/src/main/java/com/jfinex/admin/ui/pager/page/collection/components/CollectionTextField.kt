@@ -38,7 +38,9 @@ fun CollectionTextField(
             unfocusedIndicatorColor = Color.DarkGray,
             focusedLabelColor = MaterialTheme.colorScheme.secondary,
             unfocusedLabelColor = Color.DarkGray,
-            cursorColor = MaterialTheme.colorScheme.secondary
+            cursorColor = MaterialTheme.colorScheme.secondary,
+            focusedPlaceholderColor = Color.Gray,
+            unfocusedPlaceholderColor = Color.Gray
         )
     )
 }

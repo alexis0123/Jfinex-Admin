@@ -8,9 +8,12 @@ import androidx.room.Query
 interface StudentDao {
 
     @Query("SELECT * FROM students")
-    suspend fun getFields(): List<Student>
+    suspend fun getStudents(): List<Student>
 
     @Insert
     suspend fun insert(student: Student)
+
+    @Query("DELETE FROM students")
+    suspend fun clear()
 
 }

@@ -1,11 +1,12 @@
 package com.jfinex.admin.data.local.fields
 
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FieldRepository @Inject constructor(
     private val dao: FieldDao
 ) {
-    suspend fun getAll(): List<Field> = dao.getFields()
+    fun getAll(): Flow<List<Field>> = dao.getFieldsFlow()
     suspend fun insert(field: Field) = dao.insert(field)
     suspend fun clear() = dao.clear()
 }

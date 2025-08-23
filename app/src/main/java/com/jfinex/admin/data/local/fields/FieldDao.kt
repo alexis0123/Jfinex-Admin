@@ -3,12 +3,13 @@ package com.jfinex.admin.data.local.fields
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FieldDao {
 
     @Query("SELECT * FROM fields")
-    suspend fun getFields(): List<Field>
+    fun getFieldsFlow(): Flow<List<Field>>
 
     @Insert
     suspend fun insert(field: Field)

@@ -21,14 +21,17 @@ import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.zIndex
 
 @Composable
 fun CollectionPage(
-    viewModel: StudentSearchViewModel = hiltViewModel()
+    studentViewModel: StudentSearchViewModel = hiltViewModel(),
+    fieldViewModel: FieldViewModel = hiltViewModel()
 ) {
-    val block by viewModel.blockFilter.collectAsState()
-    val name by viewModel.query.collectAsState()
-    val results by viewModel.results.collectAsState()
+    val block by studentViewModel.blockFilter.collectAsState()
+    val name by studentViewModel.query.collectAsState()
+    val results by studentViewModel.results.collectAsState()
+    val fields by fieldViewModel.fields.collectAsState()
     var showResults by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
@@ -65,7 +68,7 @@ fun CollectionPage(
                     CollectionTextField(
                         value = block ?: "",
                         onValueChange = {
-                            viewModel.updateBlock(it.take(2).uppercase())
+                            studentViewModel.updateBlock(it.take(2).uppercase())
                         },
                         placeholder = "ex,1B",
                         modifier = Modifier.weight(0.65f)
@@ -89,8 +92,8 @@ fun CollectionPage(
                             ),
                             modifier = Modifier.clickable(
                                 onClick = {
-                                    viewModel.updateBlock("")
-                                    viewModel.updateQuery("")
+                                    studentViewModel.updateBlock("")
+                                    studentViewModel.updateQuery("")
                                 }
                             )
                         )
@@ -98,7 +101,7 @@ fun CollectionPage(
                     CollectionTextField(
                         value = name,
                         onValueChange = {
-                            viewModel.updateQuery(it)
+                            studentViewModel.updateQuery(it)
                             showResults = it.isNotBlank()
                         },
                         placeholder = "e.g., Dela Cruz, Juan",
@@ -116,6 +119,7 @@ fun CollectionPage(
                     .padding(horizontal = 25.dp)
                     .offset(y = 150.dp)
                     .wrapContentHeight()
+                    .zIndex(1f)
             ) {
                 Surface(
                     shadowElevation = 4.dp,
@@ -133,8 +137,8 @@ fun CollectionPage(
                                     .fillMaxWidth()
                                     .padding(8.dp)
                                     .clickable {
-                                        viewModel.updateQuery(student.name)
-                                        viewModel.updateBlock(student.block)
+                                        studentViewModel.updateQuery(student.name)
+                                        studentViewModel.updateBlock(student.block)
                                         focusManager.clearFocus()
                                         showResults = false
                                     }

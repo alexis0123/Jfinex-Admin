@@ -13,4 +13,7 @@ interface FieldDao {
     @Insert
     suspend fun insert(field: Field)
 
+    @Query("DELETE FROM fields")
+    suspend fun clear()
+
 }

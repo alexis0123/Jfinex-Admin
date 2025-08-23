@@ -19,6 +19,7 @@ fun CollectionTextField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     isEnabled: Boolean,
+    warning: Boolean,
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
@@ -37,7 +38,7 @@ fun CollectionTextField(
             unfocusedContainerColor = Color.Transparent,
             disabledContainerColor = Color.White,
             focusedIndicatorColor = MaterialTheme.colorScheme.secondary,
-            unfocusedIndicatorColor = Color.DarkGray,
+            unfocusedIndicatorColor = if (warning) Color.Red else Color.DarkGray,
             disabledIndicatorColor = Color.Black,
             focusedLabelColor = MaterialTheme.colorScheme.secondary,
             unfocusedLabelColor = Color.DarkGray,

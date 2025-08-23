@@ -48,6 +48,8 @@ fun CollectionPage(
     val selectedFields by fieldViewModel.selectedFields.collectAsState()
     val studentIsSelected by studentViewModel.studentIsSelected.collectAsState()
     var showResults by remember { mutableStateOf(false) }
+    var showEmptyFieldWarning by remember { mutableStateOf(false) }
+    var showEmptyStudentWarning by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
 
@@ -94,9 +96,11 @@ fun CollectionPage(
                         value = block ?: "",
                         onValueChange = {
                             studentViewModel.updateBlock(it.take(2).uppercase())
+                            if (showEmptyStudentWarning) showEmptyStudentWarning = false
                         },
                         placeholder = "ex,1B",
                         isEnabled = !studentIsSelected,
+                        warning = showEmptyStudentWarning,
                         modifier = Modifier.weight(0.65f)
                     )
                 }
@@ -130,9 +134,11 @@ fun CollectionPage(
                         onValueChange = {
                             studentViewModel.updateQuery(it)
                             showResults = it.isNotBlank()
+                            if (showEmptyStudentWarning) showEmptyStudentWarning = false
                         },
                         placeholder = "e.g., Dela Cruz, Juan",
                         isEnabled = !studentIsSelected,
+                        warning = showEmptyStudentWarning,
                         modifier = Modifier.weight(0.65f)
                     )
                 }
@@ -157,7 +163,7 @@ fun CollectionPage(
                             )
                             .border(
                                 width = 1.dp,
-                                color = Color.Black,
+                                color = if (showEmptyFieldWarning) Color.Red else Color.Black,
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .clickable(onClick = {
@@ -172,6 +178,7 @@ fun CollectionPage(
 
                                     else -> fieldViewModel.addToSelectedFields(field.name, "Paid")
                                 }
+                                if (showEmptyFieldWarning) showEmptyFieldWarning = false
                             })
                     ) {
                         Row(
@@ -237,8 +244,14 @@ fun CollectionPage(
                 Button(
                     onClick = {
                         when {
-
+                            !studentIsSelected ->
+                                showEmptyStudentWarning = true
+                            selectedFields.isEmpty() ->
+                                showEmptyFieldWarning = true
+                            else ->
+                                {}
                         }
+                        focusManager.clearFocus()
                     },
                     shape = RoundedCornerShape(10.dp),
                     border = BorderStroke(1.dp, Color.Black),
@@ -246,7 +259,7 @@ fun CollectionPage(
                         .width(185.dp)
                         .height(60.dp)
                 ) {
-                    Text("Record & Continue", color = Color.Black)
+                    Text("Save & Continue", color = Color.Black)
                 }
                 OutlinedButton(
                     onClick = {

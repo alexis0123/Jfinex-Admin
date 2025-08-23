@@ -4,6 +4,11 @@ import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfinex.admin.data.local.fields.Field
+import com.jfinex.admin.data.local.fields.FieldRepository
+import com.jfinex.admin.data.local.students.Student
+import com.jfinex.admin.data.local.students.StudentRepository
+import com.jfinex.admin.ui.config.components.xor.xorDe
 import com.jfinex.admin.ui.config.components.xor.xorEn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -11,15 +16,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class ConfigViewModel @Inject constructor(
-    val configRepo: ConfigRepository
+    val configRepo: ConfigRepository,
+    private val fieldRepo: FieldRepository,
+    private val studentRepo: StudentRepository
 ) : ViewModel() {
 
     private val _exportResult = MutableStateFlow<Result<Unit>?>(null)
     val exportResult: StateFlow<Result<Unit>?> = _exportResult
+
+    private val _importedConfig = MutableStateFlow<Config?>(null)
+    val importedConfig: StateFlow<Config?> = _importedConfig
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     fun exportConfig(
         contentResolver: ContentResolver,
@@ -34,7 +48,7 @@ class ConfigViewModel @Inject constructor(
 
                 val config = configRepo.buildConfig(students)
                 val json = xorEn(Json { prettyPrint = false }
-                    .encodeToString(ConfigExport.serializer(), config))
+                    .encodeToString(Config.serializer(), config))
 
                 contentResolver.openOutputStream(uri)?.use { outputStream ->
                     outputStream.write(json.toByteArray())
@@ -46,6 +60,58 @@ class ConfigViewModel @Inject constructor(
             }
         }
     }
+
+    fun importConfig(
+        contentResolver: ContentResolver,
+        uri: Uri,
+        outputFile: File
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val encoded = contentResolver.openInputStream(uri)?.use { inputStream ->
+                    inputStream.bufferedReader().readText()
+                } ?: throw IllegalArgumentException("Unable to open InputStream for URI: $uri")
+
+                val json = xorDe(encoded)
+                val config: Config = Json.decodeFromString(Config.serializer(), json)
+
+                // clear existing data first
+                fieldRepo.clear()
+                studentRepo.clear()
+
+                // insert fields + newBaseNumbers
+                config.fields.forEach { (fieldName, categories) ->
+                    val newBase = config.newBaseNumbers[fieldName] ?: 0
+                    fieldRepo.insert(
+                        Field(
+                            name = fieldName,
+                            categories = categories,
+                            newBase = newBase
+                        )
+                    )
+                }
+
+                // insert students
+                config.studentsWithReceiptNumber.forEach { (studentName, studentConfig) ->
+                    studentRepo.insert(
+                        Student(
+                            block = studentConfig.block,
+                            name = studentName,
+                            receiptNumber = studentConfig.receipts
+                        )
+                    )
+                }
+
+                _importedConfig.value = config
+                outputFile.writeText(json)
+                _exportResult.value = Result.success(Unit)
+
+            } catch (e: Exception) {
+                _exportResult.value = Result.failure(e)
+            }
+        }
+    }
+
     fun reset() {
         _exportResult.value = null
     }

@@ -3,7 +3,7 @@ package com.jfinex.admin.ui.config.exportConfig
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ConfigExport(
+data class Config(
     val newBaseNumbers: Map<String, Int>,
     val fields: Map<String, List<String>>,
     val studentsWithReceiptNumber: Map<String, StudentConfig>

@@ -11,7 +11,7 @@ class ConfigRepository @Inject constructor(
     // Helper to check if there are any fields added
     fun hasFields(): Boolean = fieldsRepository.fields.isNotEmpty()
 
-    fun buildConfig(students: List<List<String>>): ConfigExport {
+    fun buildConfig(students: List<List<String>>): Config {
         val fields = fieldsRepository.fields.associate { field ->
             field.name to field.category
         }
@@ -31,7 +31,7 @@ class ConfigRepository @Inject constructor(
             )
         }
 
-        return ConfigExport(
+        return Config(
             newBaseNumbers = newBases,
             fields = fields,
             studentsWithReceiptNumber = studentsWithRN

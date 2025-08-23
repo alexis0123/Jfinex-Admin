@@ -1,8 +1,12 @@
 package com.jfinex.admin.ui.pager.page.collection
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,6 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,6 +45,7 @@ fun CollectionPage(
     val name by studentViewModel.query.collectAsState()
     val results by studentViewModel.results.collectAsState()
     val fields by fieldViewModel.fields.collectAsState()
+    val selectedFields by fieldViewModel.selectedFields.collectAsState()
     var showResults by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
@@ -55,14 +69,24 @@ fun CollectionPage(
             verticalArrangement = Arrangement.spacedBy(15.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Collection Entry", fontWeight = FontWeight.Bold, fontSize = 25.sp)
+            Box {
+                Text("Collection Entry", fontWeight = FontWeight.Bold, fontSize = 25.sp)
+                Text(
+                    "Collection Entry", fontWeight = FontWeight.Bold, fontSize = 25.sp,
+                    modifier = Modifier.offset(1.dp, 1.dp)
+                )
+            }
 
             Row(
-                modifier = Modifier.fillMaxWidth().height(85.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(85.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(
-                    modifier = Modifier.weight(0.25f).fillMaxHeight()
+                    modifier = Modifier
+                        .weight(0.25f)
+                        .fillMaxHeight()
                 ) {
                     Text("   Block", fontWeight = FontWeight.Bold)
                     CollectionTextField(
@@ -76,10 +100,14 @@ fun CollectionPage(
                 }
                 Spacer(modifier = Modifier.weight(0.02f))
                 Column(
-                    modifier = Modifier.weight(0.73f).fillMaxHeight()
+                    modifier = Modifier
+                        .weight(0.73f)
+                        .fillMaxHeight()
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(end = 10.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text("   Student Name", fontWeight = FontWeight.Bold)
@@ -109,26 +137,150 @@ fun CollectionPage(
                     )
                 }
             }
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(270.dp)
+            ) {
+                items(fields) { field ->
+                    var selectedName by remember { mutableStateOf("") }
+                    var showDropDown by remember { mutableStateOf(false) }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(70.dp)
+                            .background(
+                                color = if (field.name in selectedFields) Color.White
+                                else Color.Transparent,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = Color.Black,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clickable(onClick = {
+                                when {
+                                    field.categories.isNotEmpty() && selectedName.isBlank() ->
+                                        showDropDown = true
+
+                                    field.name in selectedFields -> {
+                                        selectedName = ""
+                                        fieldViewModel
+                                            .removeToSelectedFields(field.name)
+                                    }
+
+                                    else -> fieldViewModel.addToSelectedFields(field.name, "Paid")
+                                }
+                            })
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (field.name in selectedFields)
+                                    Icons.Filled.CheckBox else Icons.Filled.CheckBoxOutlineBlank,
+                                contentDescription = "Close",
+                                modifier = Modifier
+                                    .weight(0.2f)
+                                    .size(50.dp)
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .weight(0.7f),
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Text(
+                                    text = if (selectedName.isBlank()) field.name
+                                    else selectedName,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp
+                                )
+                                if (field.categories.isNotEmpty() && selectedName.isBlank())
+                                    Text(
+                                    text = field.categories.joinToString(", "),
+                                    color = Color.Gray,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                        DropdownMenu(
+                            expanded = showDropDown,
+                            onDismissRequest = { showDropDown = false },
+                            modifier = Modifier.width(330.dp)
+                        ) {
+                            field.categories.forEach { category ->
+                                DropdownMenuItem(
+                                    text = { Text(category) },
+                                    onClick = {
+                                        selectedName = "${field.name} ($category)"
+                                        fieldViewModel.addToSelectedFields(field.name, category)
+                                        showDropDown = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            HorizontalDivider(color = Color.Black)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = {
+                        when {
+
+                        }
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, Color.Black),
+                    modifier = Modifier
+                        .width(185.dp)
+                        .height(60.dp)
+                ) {
+                    Text("Record & Continue", color = Color.Black)
+                }
+                OutlinedButton(
+                    onClick = {
+
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .width(125.dp)
+                        .height(60.dp)
+                ) {
+                    Text(
+                        text = "Clear",
+                        color = Color.Black
+                    )
+                }
+            }
         }
 
-        // Lazy list overlay
+
+
         if (showResults && results.isNotEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 25.dp)
-                    .offset(y = 150.dp)
-                    .wrapContentHeight()
                     .zIndex(1f)
+                    .offset(y = 197.dp),
+                contentAlignment = Alignment.TopCenter
             ) {
                 Surface(
                     shadowElevation = 4.dp,
                     color = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 45.dp)
-                        .heightIn(max = 400.dp)
+                    modifier = Modifier.heightIn(max = 400.dp)
                 ) {
                     LazyColumn {
                         items(results) { student ->
@@ -163,5 +315,6 @@ fun CollectionPage(
                 }
             }
         }
+
     }
 }

@@ -44,11 +44,12 @@ class StudentSearchViewModel @Inject constructor(
                             student.name.contains(query, ignoreCase = true) &&
                                     (block.isNullOrBlank() || student.block.equals(block, ignoreCase = true))
                         }
+                        .sortedWith(
+                            compareByDescending<Student> { it.name.startsWith(query, ignoreCase = true) }
+                                .thenBy { similarity(query, it.name.lowercase()) }
+                        )
+                        .take(50)
                         .toList()
-                        .let { filtered ->
-                            filtered.sortedBy { similarity(query, it.name.lowercase()) }
-                                .take(50)
-                        }
                 }
             }
             .flowOn(Dispatchers.Default)

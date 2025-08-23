@@ -199,8 +199,11 @@ fun CollectionPage(
                                 verticalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
-                                    text = if (field.name !in selectedFields) field.name
-                                    else "${field.name} (${selectedFields[field.name]})",
+                                    text = when {
+                                        field.name in selectedFields && field.categories.isNotEmpty() ->
+                                            "${field.name} (${selectedFields[field.name]})"
+                                        else -> field.name
+                                    },
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 17.sp
                                 )

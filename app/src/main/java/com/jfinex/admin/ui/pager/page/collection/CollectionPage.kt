@@ -1,6 +1,7 @@
 package com.jfinex.admin.ui.pager.page.collection
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 
 @Composable
 fun CollectionPage(
@@ -25,11 +29,21 @@ fun CollectionPage(
     val block by viewModel.blockFilter.collectAsState()
     val name by viewModel.query.collectAsState()
     val results by viewModel.results.collectAsState()
-
     var showResults by remember { mutableStateOf(false) }
 
-    // detect clicks outside the lazy column to dismiss
-    Box(modifier = Modifier.fillMaxSize()) {
+    val focusManager = LocalFocusManager.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                focusManager.clearFocus()
+                showResults = false
+            }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -53,7 +67,7 @@ fun CollectionPage(
                         onValueChange = {
                             viewModel.updateBlock(it.take(2).uppercase())
                         },
-                        placeholder = "1B",
+                        placeholder = "ex,1B",
                         modifier = Modifier.weight(0.65f)
                     )
                 }
@@ -61,14 +75,33 @@ fun CollectionPage(
                 Column(
                     modifier = Modifier.weight(0.73f).fillMaxHeight()
                 ) {
-                    Text("   Student Name", fontWeight = FontWeight.Bold)
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(end = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("   Student Name", fontWeight = FontWeight.Bold)
+                        if (name.isNotBlank()) Text(
+                            text = "Clear",
+                            fontWeight = FontWeight.Bold,
+                            style = TextStyle(
+                                color = Color.Red,
+                                textDecoration = TextDecoration.Underline
+                            ),
+                            modifier = Modifier.clickable(
+                                onClick = {
+                                    viewModel.updateBlock("")
+                                    viewModel.updateQuery("")
+                                }
+                            )
+                        )
+                    }
                     CollectionTextField(
                         value = name,
                         onValueChange = {
                             viewModel.updateQuery(it)
                             showResults = it.isNotBlank()
                         },
-                        placeholder = "Dela Cruz, Juan",
+                        placeholder = "e.g., Dela Cruz, Juan",
                         modifier = Modifier.weight(0.65f)
                     )
                 }
@@ -102,6 +135,7 @@ fun CollectionPage(
                                     .clickable {
                                         viewModel.updateQuery(student.name)
                                         viewModel.updateBlock(student.block)
+                                        focusManager.clearFocus()
                                         showResults = false
                                     }
                             ) {

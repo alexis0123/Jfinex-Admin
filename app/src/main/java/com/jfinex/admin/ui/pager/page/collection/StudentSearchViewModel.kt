@@ -1,9 +1,5 @@
 package com.jfinex.admin.ui.pager.page.collection
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfinex.admin.data.local.students.Student
@@ -12,7 +8,6 @@ import com.jfinex.admin.ui.pager.page.collection.components.similarity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

@@ -46,8 +46,8 @@ fun CollectionPage(
     val results by studentViewModel.results.collectAsState()
     val fields by fieldViewModel.fields.collectAsState()
     val selectedFields by fieldViewModel.selectedFields.collectAsState()
+    val studentIsSelected by studentViewModel.studentIsSelected.collectAsState()
     var showResults by remember { mutableStateOf(false) }
-    var studentIsSelected by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
 
@@ -124,7 +124,7 @@ fun CollectionPage(
                                 onClick = {
                                     studentViewModel.updateBlock("")
                                     studentViewModel.updateQuery("")
-                                    studentIsSelected = false
+                                    studentViewModel.deselectStudent()
                                 }
                             )
                         )
@@ -149,7 +149,6 @@ fun CollectionPage(
                     .height(270.dp)
             ) {
                 items(fields) { field ->
-                    var selectedName by remember { mutableStateOf("") }
                     var showDropDown by remember { mutableStateOf(false) }
                     Box(
                         modifier = Modifier
@@ -167,11 +166,10 @@ fun CollectionPage(
                             )
                             .clickable(onClick = {
                                 when {
-                                    field.categories.isNotEmpty() && selectedName.isBlank() ->
+                                    field.categories.isNotEmpty() && field.name !in selectedFields ->
                                         showDropDown = true
 
                                     field.name in selectedFields -> {
-                                        selectedName = ""
                                         fieldViewModel
                                             .removeToSelectedFields(field.name)
                                     }
@@ -201,12 +199,12 @@ fun CollectionPage(
                                 verticalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
-                                    text = if (selectedName.isBlank()) field.name
-                                    else selectedName,
+                                    text = if (field.name !in selectedFields) field.name
+                                    else "${field.name} (${selectedFields[field.name]})",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 17.sp
                                 )
-                                if (field.categories.isNotEmpty() && selectedName.isBlank())
+                                if (field.categories.isNotEmpty() && field.name !in selectedFields)
                                     Text(
                                     text = field.categories.joinToString(", "),
                                     color = Color.Gray,
@@ -223,7 +221,6 @@ fun CollectionPage(
                                 DropdownMenuItem(
                                     text = { Text(category) },
                                     onClick = {
-                                        selectedName = "${field.name} ($category)"
                                         fieldViewModel.addToSelectedFields(field.name, category)
                                         showDropDown = false
                                     }
@@ -296,7 +293,7 @@ fun CollectionPage(
                                         studentViewModel.updateQuery(student.name)
                                         studentViewModel.updateBlock(student.block)
                                         focusManager.clearFocus()
-                                        studentIsSelected = true
+                                        studentViewModel.selectStudent()
                                         showResults = false
                                     }
                             ) {

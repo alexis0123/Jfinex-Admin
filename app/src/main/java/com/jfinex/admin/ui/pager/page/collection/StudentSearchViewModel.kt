@@ -1,5 +1,9 @@
 package com.jfinex.admin.ui.pager.page.collection
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfinex.admin.data.local.students.Student
@@ -20,8 +24,12 @@ class StudentSearchViewModel @Inject constructor(
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
+
     private val _blockFilter = MutableStateFlow<String?>(null)
     val blockFilter: StateFlow<String?> = _blockFilter
+
+    private val _studentIsSelected = MutableStateFlow(false)
+    val studentIsSelected: StateFlow<Boolean> = _studentIsSelected
 
 
 
@@ -62,4 +70,13 @@ class StudentSearchViewModel @Inject constructor(
     fun updateBlock(block: String?) {
         _blockFilter.value = block
     }
+
+    fun deselectStudent() {
+        _studentIsSelected.value = false
+    }
+
+    fun selectStudent() {
+        _studentIsSelected.value = true
+    }
+
 }

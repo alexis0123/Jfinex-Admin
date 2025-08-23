@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Field(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val categories: List<String>
+    val categories: List<String>,
+    val newBase: Int
 )

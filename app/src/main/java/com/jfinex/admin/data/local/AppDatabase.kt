@@ -8,6 +8,7 @@ import com.jfinex.admin.data.local.collection.CollectionDao
 import com.jfinex.admin.data.local.fields.Field
 import com.jfinex.admin.data.local.fields.FieldDao
 import com.jfinex.admin.data.local.students.Student
+import com.jfinex.admin.data.local.students.StudentDao
 
 @Database(
     entities = [
@@ -25,4 +26,5 @@ import com.jfinex.admin.data.local.students.Student
 abstract class AppDatabase : RoomDatabase() {
     abstract fun collectionDao(): CollectionDao
     abstract fun fieldDao(): FieldDao
+    abstract fun studentDao(): StudentDao
 }

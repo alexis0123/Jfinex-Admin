@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.jfinex.admin.data.local.collection.CollectionDao
 import com.jfinex.admin.data.local.fields.FieldDao
+import com.jfinex.admin.data.local.students.StudentDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,5 +32,8 @@ object DatabaseModule {
 
     @Provides
     fun providesFieldDao(db: AppDatabase): FieldDao = db.fieldDao()
+
+    @Provides
+    fun providesStudentDao(db: AppDatabase): StudentDao = db.studentDao()
 
 }

@@ -38,15 +38,18 @@ class StudentSearchViewModel @Inject constructor(
             .debounce(200)
             .map { (query, block, students) ->
                 if (query.isBlank()) emptyList()
-                else students
-                    .asSequence()
-                    .filter { student ->
-                        student.name.contains(query, ignoreCase = true) &&
-                                (block.isNullOrBlank() || student.block.equals(block, ignoreCase = true))
-                    }
-                    .sortedBy { student -> similarity(query, student.name.lowercase()) }
-                    .take(50)
-                    .toList()
+                else {
+                    students.asSequence()
+                        .filter { student ->
+                            student.name.contains(query, ignoreCase = true) &&
+                                    (block.isNullOrBlank() || student.block.equals(block, ignoreCase = true))
+                        }
+                        .toList()
+                        .let { filtered ->
+                            filtered.sortedBy { similarity(query, it.name.lowercase()) }
+                                .take(50)
+                        }
+                }
             }
             .flowOn(Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())

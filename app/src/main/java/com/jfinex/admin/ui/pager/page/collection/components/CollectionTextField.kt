@@ -40,7 +40,9 @@ fun CollectionTextField(
             unfocusedLabelColor = Color.DarkGray,
             cursorColor = MaterialTheme.colorScheme.secondary,
             focusedPlaceholderColor = Color.Gray,
-            unfocusedPlaceholderColor = Color.Gray
+            unfocusedPlaceholderColor = Color.Gray,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black
         )
     )
 }

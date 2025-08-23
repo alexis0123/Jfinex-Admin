@@ -29,4 +29,8 @@ class FieldViewModel @Inject constructor(
         _selectedFields.value -= fieldName
     }
 
+    fun clear() {
+        _selectedFields.value = mapOf()
+    }
+
 }

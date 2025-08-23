@@ -121,11 +121,7 @@ fun CollectionPage(
                                 textDecoration = TextDecoration.Underline
                             ),
                             modifier = Modifier.clickable(
-                                onClick = {
-                                    studentViewModel.updateBlock("")
-                                    studentViewModel.updateQuery("")
-                                    studentViewModel.deselectStudent()
-                                }
+                                onClick = { studentViewModel.clear() }
                             )
                         )
                     }
@@ -254,7 +250,8 @@ fun CollectionPage(
                 }
                 OutlinedButton(
                     onClick = {
-
+                        studentViewModel.clear()
+                        fieldViewModel.clear()
                     },
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier

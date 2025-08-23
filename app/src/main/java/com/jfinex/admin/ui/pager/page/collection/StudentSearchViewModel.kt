@@ -71,12 +71,14 @@ class StudentSearchViewModel @Inject constructor(
         _blockFilter.value = block
     }
 
-    fun deselectStudent() {
-        _studentIsSelected.value = false
-    }
-
     fun selectStudent() {
         _studentIsSelected.value = true
+    }
+
+    fun clear() {
+        updateQuery("")
+        updateBlock("")
+        if (_studentIsSelected.value) _studentIsSelected.value = false
     }
 
 }

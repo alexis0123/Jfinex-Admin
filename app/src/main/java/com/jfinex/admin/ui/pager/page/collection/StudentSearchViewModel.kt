@@ -7,7 +7,9 @@ import com.jfinex.admin.data.local.students.StudentRepository
 import com.jfinex.admin.ui.pager.page.collection.components.similarity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,11 +28,15 @@ class StudentSearchViewModel @Inject constructor(
     private val _studentIsSelected = MutableStateFlow(false)
     val studentIsSelected: StateFlow<Boolean> = _studentIsSelected
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     val results: StateFlow<List<Student>> =
         combine(_query, _blockFilter, allStudents) { query, block, students ->
             Triple(query.lowercase(), block, students)
         }
-            .debounce(200)
+            .onEach { _isLoading.value = true }
+            .debounce(100)
             .map { (query, block, students) ->
                 if (query.isBlank()) emptyList()
                 else {
@@ -47,6 +53,7 @@ class StudentSearchViewModel @Inject constructor(
                         .toList()
                 }
             }
+            .onEach { _isLoading.value = false }
             .flowOn(Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 

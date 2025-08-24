@@ -29,6 +29,9 @@ class ConfigViewModel @Inject constructor(
     private val _exportResult = MutableStateFlow<Result<Unit>?>(null)
     val exportResult: StateFlow<Result<Unit>?> = _exportResult
 
+    private val _importResult = MutableStateFlow<Result<Unit>?>(null)
+    val importResult: StateFlow<Result<Unit>?> = _importResult
+
     private val _importedConfig = MutableStateFlow<Config?>(null)
     val importedConfig: StateFlow<Config?> = _importedConfig
 
@@ -42,7 +45,6 @@ class ConfigViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                // Validation
                 if (!configRepo.hasFields()) throw IllegalStateException("No fields added")
                 if (students.isEmpty()) throw IllegalStateException("No students to export")
 
@@ -75,11 +77,9 @@ class ConfigViewModel @Inject constructor(
                 val json = xorDe(encoded)
                 val config: Config = Json.decodeFromString(Config.serializer(), json)
 
-                // clear existing data first
                 fieldRepo.clear()
                 studentRepo.clear()
 
-                // insert fields + newBaseNumbers
                 config.fields.forEach { (fieldName, categories) ->
                     val newBase = config.newBaseNumbers[fieldName] ?: 0
                     fieldRepo.insert(
@@ -91,7 +91,6 @@ class ConfigViewModel @Inject constructor(
                     )
                 }
 
-                // insert students
                 config.studentsWithReceiptNumber.forEach { (studentName, studentConfig) ->
                     studentRepo.insert(
                         Student(
@@ -104,15 +103,16 @@ class ConfigViewModel @Inject constructor(
 
                 _importedConfig.value = config
                 outputFile.writeText(json)
-                _exportResult.value = Result.success(Unit)
+                _importResult.value = Result.success(Unit)
 
             } catch (e: Exception) {
-                _exportResult.value = Result.failure(e)
+                _importResult.value = Result.failure(e)
             }
         }
     }
 
     fun reset() {
         _exportResult.value = null
+        _importResult.value = null
     }
 }

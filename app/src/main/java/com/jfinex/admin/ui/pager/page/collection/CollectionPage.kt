@@ -12,7 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,11 +19,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -47,9 +48,11 @@ fun CollectionPage(
     val fields by fieldViewModel.fields.collectAsState()
     val selectedFields by fieldViewModel.selectedFields.collectAsState()
     val studentIsSelected by studentViewModel.studentIsSelected.collectAsState()
+    val isLoading by studentViewModel.isLoading.collectAsState()
     var showResults by remember { mutableStateOf(false) }
     var showEmptyFieldWarning by remember { mutableStateOf(false) }
     var showEmptyStudentWarning by remember { mutableStateOf(false) }
+    var showNoConfigWarning by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
 
@@ -125,7 +128,10 @@ fun CollectionPage(
                                 textDecoration = TextDecoration.Underline
                             ),
                             modifier = Modifier.clickable(
-                                onClick = { studentViewModel.clear() }
+                                onClick = {
+                                    studentViewModel.clear()
+                                    showResults = false
+                                }
                             )
                         )
                     }
@@ -150,6 +156,15 @@ fun CollectionPage(
                     .fillMaxWidth()
                     .height(270.dp)
             ) {
+                if (fields.isEmpty()) {
+                    item {
+                        Text(
+                            text = "  Config Required",
+                            color = if (showNoConfigWarning) Color.Red
+                            else Color.Gray
+                        )
+                    }
+                }
                 items(fields) { field ->
                     var showDropDown by remember { mutableStateOf(false) }
                     Box(
@@ -205,6 +220,7 @@ fun CollectionPage(
                                     text = when {
                                         field.name in selectedFields && field.categories.isNotEmpty() ->
                                             "${field.name} (${selectedFields[field.name]})"
+
                                         else -> field.name
                                     },
                                     fontWeight = FontWeight.Bold,
@@ -212,10 +228,10 @@ fun CollectionPage(
                                 )
                                 if (field.categories.isNotEmpty() && field.name !in selectedFields)
                                     Text(
-                                    text = field.categories.joinToString(", "),
-                                    color = Color.Gray,
-                                    fontSize = 12.sp
-                                )
+                                        text = field.categories.joinToString(", "),
+                                        color = Color.Gray,
+                                        fontSize = 12.sp
+                                    )
                             }
                         }
                         DropdownMenu(
@@ -244,12 +260,16 @@ fun CollectionPage(
                 Button(
                     onClick = {
                         when {
+                            fields.isEmpty() ->
+                                showNoConfigWarning = true
+
                             !studentIsSelected ->
                                 showEmptyStudentWarning = true
+
                             selectedFields.isEmpty() ->
                                 showEmptyFieldWarning = true
-                            else ->
-                                {}
+
+                            else -> {}
                         }
                         focusManager.clearFocus()
                     },
@@ -281,7 +301,7 @@ fun CollectionPage(
 
 
 
-        if (showResults && results.isNotEmpty()) {
+        if (showResults) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -296,35 +316,59 @@ fun CollectionPage(
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.heightIn(max = 400.dp)
                 ) {
-                    LazyColumn {
-                        items(results) { student ->
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)
-                                    .clickable {
-                                        studentViewModel.updateQuery(student.name)
-                                        studentViewModel.updateBlock(student.block)
-                                        focusManager.clearFocus()
-                                        studentViewModel.selectStudent()
-                                        showResults = false
-                                    }
-                            ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(60.dp),
-                                    modifier = Modifier.padding(horizontal = 10.dp)
+                    if (isLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(strokeWidth = 5.dp)
+                        }
+                    } else if (results.isNotEmpty()) {
+                        LazyColumn {
+                            items(results) { student ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                        .clickable {
+                                            studentViewModel.updateQuery(student.name)
+                                            studentViewModel.updateBlock(student.block)
+                                            focusManager.clearFocus()
+                                            studentViewModel.selectStudent()
+                                            showResults = false
+                                        }
                                 ) {
-                                    Text(
-                                        text = student.block,
-                                        color = Color.Gray
-                                    )
-                                    Text(
-                                        text = student.name,
-                                        color = Color.Black,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(60.dp),
+                                        modifier = Modifier.padding(horizontal = 10.dp)
+                                    ) {
+                                        Text(
+                                            text = student.block,
+                                            color = Color.Gray
+                                        )
+                                        Text(
+                                            text = student.name,
+                                            color = Color.Black,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                             }
+                        }
+                    }
+                    else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No result for \"$name\".",
+                                color = Color.Gray
+                            )
                         }
                     }
                 }

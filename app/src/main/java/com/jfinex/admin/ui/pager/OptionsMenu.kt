@@ -16,16 +16,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.jfinex.admin.ui.dialog.addStudent.AddStudent
 import com.jfinex.admin.ui.dialog.createConfig.CreateConfigDialog
+import com.jfinex.admin.ui.dialog.importConfig.ImportConfig
 
 @Composable
 fun OptionsMenu() {
     var expanded by remember { mutableStateOf(false) }
     var showCreateConfig by remember { mutableStateOf(false) }
+    var showAddStudent by remember { mutableStateOf(false) }
+    var showImportConfig by remember { mutableStateOf(false) }
 
     if (showCreateConfig) {
         CreateConfigDialog(
             onDismiss = { showCreateConfig = false }
+        )
+    }
+
+    if (showAddStudent) {
+        AddStudent(
+            onDismiss = { showAddStudent = false }
+        )
+    }
+
+    if (showImportConfig) {
+        ImportConfig(
+            onDismiss = { showImportConfig = false }
         )
     }
 
@@ -50,11 +66,20 @@ fun OptionsMenu() {
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Export Data to CSV") },
-                    onClick = {
+                text = { Text("Import Config") },
+                onClick = {
                         expanded = false
+                        showImportConfig = true
                     }
                 )
+                DropdownMenuItem(
+                    text = { Text("Add Student") },
+                    onClick = {
+                        expanded = false
+                        showAddStudent = true
+                    }
+                )
+
             }
         }
     }

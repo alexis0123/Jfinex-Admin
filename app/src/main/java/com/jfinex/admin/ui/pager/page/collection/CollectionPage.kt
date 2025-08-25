@@ -35,12 +35,17 @@ import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
+import com.jfinex.admin.data.local.user.UserViewModel
+import com.jfinex.admin.ui.config.exportConfig.ConfigViewModel
+import com.jfinex.admin.ui.dialog.setUser.SetUserName
 
 @Composable
 fun CollectionPage(
     studentViewModel: StudentSearchViewModel = hiltViewModel(),
-    fieldViewModel: FieldViewModel = hiltViewModel()
+    fieldViewModel: FieldViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
     val block by studentViewModel.blockFilter.collectAsState()
     val name by studentViewModel.query.collectAsState()
@@ -49,12 +54,18 @@ fun CollectionPage(
     val selectedFields by fieldViewModel.selectedFields.collectAsState()
     val studentIsSelected by studentViewModel.studentIsSelected.collectAsState()
     val isLoading by studentViewModel.isLoading.collectAsState()
+    val user by userViewModel.user.collectAsState()
+    val newUser by userViewModel.isNewUser.collectAsState()
     var showResults by remember { mutableStateOf(false) }
     var showEmptyFieldWarning by remember { mutableStateOf(false) }
     var showEmptyStudentWarning by remember { mutableStateOf(false) }
     var showNoConfigWarning by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
+
+    if (newUser) {
+        SetUserName()
+    }
 
     Box(
         modifier = Modifier
@@ -67,6 +78,21 @@ fun CollectionPage(
                 showResults = false
             }
     ) {
+        Box(
+            modifier = Modifier
+                .padding(10.dp)
+                .height(40.dp)
+                .width(120.dp)
+                .border(width = 1.dp, color = Color.Black,
+                    shape = RoundedCornerShape(32.dp))
+                .align(Alignment.TopEnd)
+                .padding(horizontal = 10.dp)
+        ) { Text(
+            text = user?.name ?: "",
+            color = Color.Gray,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.align(Alignment.Center)
+        ) }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -156,6 +182,11 @@ fun CollectionPage(
                     .fillMaxWidth()
                     .height(270.dp)
             ) {
+                selectedFields.keys.forEach {
+                    if (it !in fields.map { it.name }) {
+                        fieldViewModel.removeToSelectedFields(it)
+                    }
+                }
                 if (fields.isEmpty()) {
                     item {
                         Text(
@@ -237,7 +268,7 @@ fun CollectionPage(
                         DropdownMenu(
                             expanded = showDropDown,
                             onDismissRequest = { showDropDown = false },
-                            modifier = Modifier.width(330.dp)
+                            modifier = Modifier.width(330.dp).heightIn(max = 200.dp)
                         ) {
                             field.categories.forEach { category ->
                                 DropdownMenuItem(

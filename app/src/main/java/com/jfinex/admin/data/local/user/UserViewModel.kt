@@ -15,10 +15,10 @@ class UserViewModel @Inject constructor(
     private val repo: UserRepo
 ): ViewModel() {
     val user: StateFlow<User?> = repo.getUser()
-        .stateIn(viewModelScope, SharingStarted.Lazily, null)
+        .stateIn(viewModelScope, SharingStarted.Lazily, User(name = ""))
 
     val isNewUser: StateFlow<Boolean> = user.map { it == null }
-        .stateIn(viewModelScope, SharingStarted.Lazily, true)
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     fun setUserTo(name: String) {
         viewModelScope.launch {

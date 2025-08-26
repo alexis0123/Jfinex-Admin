@@ -44,7 +44,7 @@ android {
     applicationVariants.all {
         outputs.all {
             val version = this@android.defaultConfig.versionName
-            val apkName = "Jfinex(Admin)-${version}.apk"
+            val apkName = "Jfinex-admin-v${version}.apk"
 
             (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = apkName
         }

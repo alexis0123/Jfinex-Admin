@@ -63,47 +63,31 @@ class ConfigViewModel @Inject constructor(
         }
     }
 
-    fun importConfig(
-        contentResolver: ContentResolver,
-        uri: Uri,
-        outputFile: File
-    ) {
+    fun importConfig(contentResolver: ContentResolver, uri: Uri, outputFile: File) {
         viewModelScope.launch(Dispatchers.IO) {
+            _isLoading.value = true
             try {
-                val encoded = contentResolver.openInputStream(uri)?.use { inputStream ->
-                    inputStream.bufferedReader().readText()
-                } ?: throw IllegalArgumentException("Unable to open InputStream for URI: $uri")
+                val encoded = contentResolver.openInputStream(uri)?.use { it.bufferedReader().readText() }
+                    ?: throw IllegalArgumentException("Unable to open InputStream for URI: $uri")
 
                 val json = xorDe(encoded)
                 val config: Config = Json.decodeFromString(Config.serializer(), json)
-
+                _importResult.value = Result.success(Unit)
+                _isLoading.value = false
                 fieldRepo.clear()
                 studentRepo.clear()
 
                 config.fields.forEach { (fieldName, categories) ->
                     val newBase = config.newBaseNumbers[fieldName] ?: 0
-                    fieldRepo.insert(
-                        Field(
-                            name = fieldName,
-                            categories = categories,
-                            newBase = newBase
-                        )
-                    )
+                    fieldRepo.insert(Field(name = fieldName, categories = categories, newBase = newBase))
                 }
 
                 config.studentsWithReceiptNumber.forEach { (studentName, studentConfig) ->
-                    studentRepo.insert(
-                        Student(
-                            block = studentConfig.block,
-                            name = studentName,
-                            receiptNumber = studentConfig.receipts
-                        )
-                    )
+                    studentRepo.insert(Student(block = studentConfig.block, name = studentName, receiptNumber = studentConfig.receipts))
                 }
 
                 _importedConfig.value = config
                 outputFile.writeText(json)
-                _importResult.value = Result.success(Unit)
 
             } catch (e: Exception) {
                 _importResult.value = Result.failure(e)

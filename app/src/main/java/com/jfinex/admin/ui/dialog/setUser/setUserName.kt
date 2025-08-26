@@ -54,7 +54,9 @@ fun SetUserName(
             ) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
                 ) {
                     OutlinedTextField(
                         value = name,
@@ -90,15 +92,19 @@ fun SetUserName(
                     Spacer(modifier = Modifier.weight(0.05f))
                     Button(
                         onClick = {
-                            if (name.length < 2) notValidName = true
-                            else viewModel.setUserTo(name.replace(".","").trim())
+                            when {
+                                name.length < 2 ->
+                                    notValidName = true
+                                else ->
+                                    viewModel.setUserTo(name.replace(".", "").trim())
+                            }
                         },
                         shape = RoundedCornerShape(10.dp),
                         border = BorderStroke(1.dp, Color.Black),
                         modifier = Modifier
                             .weight(0.35f)
                             .height(53.7.dp)
-                            .offset(y = 10.dp )
+                            .offset(y = 10.dp)
                     ) {
                         Text("Save")
                     }

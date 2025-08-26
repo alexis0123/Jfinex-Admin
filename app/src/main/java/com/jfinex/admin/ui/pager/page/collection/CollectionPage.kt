@@ -268,7 +268,7 @@ fun CollectionPage(
                         DropdownMenu(
                             expanded = showDropDown,
                             onDismissRequest = { showDropDown = false },
-                            modifier = Modifier.width(330.dp).heightIn(max = 200.dp)
+                            modifier = Modifier.width(330.dp).heightIn(max = 185.dp)
                         ) {
                             field.categories.forEach { category ->
                                 DropdownMenuItem(

@@ -4,10 +4,10 @@ import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfinex.admin.data.local.fields.Field
-import com.jfinex.admin.data.local.fields.FieldRepository
-import com.jfinex.admin.data.local.students.Student
-import com.jfinex.admin.data.local.students.StudentRepository
+import com.jfinex.admin.data.local.features.fields.Field
+import com.jfinex.admin.data.local.features.fields.FieldRepository
+import com.jfinex.admin.data.local.features.students.Student
+import com.jfinex.admin.data.local.features.students.StudentRepository
 import com.jfinex.admin.ui.config.components.xor.xorDe
 import com.jfinex.admin.ui.config.components.xor.xorEn
 import dagger.hilt.android.lifecycle.HiltViewModel

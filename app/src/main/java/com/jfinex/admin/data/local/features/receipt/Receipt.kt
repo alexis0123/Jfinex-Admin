@@ -1,4 +1,4 @@
-package com.jfinex.admin.data.local.receipt
+package com.jfinex.admin.data.local.features.receipt
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

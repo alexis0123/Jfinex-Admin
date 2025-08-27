@@ -1,12 +1,12 @@
-package com.jfinex.admin.data.local
+package com.jfinex.admin.data.local.database
 
 import android.app.Application
 import androidx.room.Room
-import com.jfinex.admin.data.local.collection.CollectionDao
-import com.jfinex.admin.data.local.fields.FieldDao
-import com.jfinex.admin.data.local.receipt.ReceiptDao
-import com.jfinex.admin.data.local.students.StudentDao
-import com.jfinex.admin.data.local.user.UserDao
+import com.jfinex.admin.data.local.features.collection.CollectionDao
+import com.jfinex.admin.data.local.features.fields.FieldDao
+import com.jfinex.admin.data.local.features.receipt.ReceiptDao
+import com.jfinex.admin.data.local.features.students.StudentDao
+import com.jfinex.admin.data.local.features.user.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

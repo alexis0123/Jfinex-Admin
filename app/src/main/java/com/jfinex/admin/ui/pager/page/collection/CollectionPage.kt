@@ -37,8 +37,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
-import com.jfinex.admin.data.local.user.UserViewModel
-import com.jfinex.admin.ui.config.exportConfig.ConfigViewModel
+import com.jfinex.admin.data.local.features.user.UserViewModel
 import com.jfinex.admin.ui.dialog.setUser.SetUserName
 
 @Composable

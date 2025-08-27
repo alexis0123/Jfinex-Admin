@@ -1,4 +1,4 @@
-package com.jfinex.admin.data.local.user
+package com.jfinex.admin.data.local.features.user
 
 import androidx.room.Dao
 import androidx.room.Insert

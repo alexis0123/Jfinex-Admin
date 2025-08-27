@@ -1,6 +1,5 @@
-package com.jfinex.admin.data.local.receipt
+package com.jfinex.admin.data.local.features.receipt
 
-import com.jfinex.admin.data.local.collection.Collection
 import java.time.LocalDate
 import javax.inject.Inject
 

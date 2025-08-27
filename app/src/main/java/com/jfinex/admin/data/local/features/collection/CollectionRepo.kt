@@ -1,4 +1,4 @@
-package com.jfinex.admin.data.local.collection
+package com.jfinex.admin.data.local.features.collection
 
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate

@@ -1,4 +1,4 @@
-package com.jfinex.admin.data.local.fields
+package com.jfinex.admin.data.local.features.fields
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

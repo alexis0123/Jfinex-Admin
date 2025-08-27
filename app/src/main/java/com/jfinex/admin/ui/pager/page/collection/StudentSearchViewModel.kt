@@ -2,14 +2,12 @@ package com.jfinex.admin.ui.pager.page.collection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfinex.admin.data.local.students.Student
-import com.jfinex.admin.data.local.students.StudentRepository
+import com.jfinex.admin.data.local.features.students.Student
+import com.jfinex.admin.data.local.features.students.StudentRepository
 import com.jfinex.admin.ui.pager.page.collection.components.similarity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

@@ -1,4 +1,4 @@
-package com.jfinex.admin.data.local
+package com.jfinex.admin.data.local.converters
 
 import androidx.room.TypeConverter
 import java.time.LocalDate

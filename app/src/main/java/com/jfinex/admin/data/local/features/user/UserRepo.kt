@@ -1,4 +1,4 @@
-package com.jfinex.admin.data.local.user
+package com.jfinex.admin.data.local.features.user
 
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

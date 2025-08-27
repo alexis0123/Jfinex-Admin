@@ -1,4 +1,4 @@
-package com.jfinex.admin.data.local.collection
+package com.jfinex.admin.data.local.features.collection
 
 import androidx.room.Dao
 import androidx.room.Delete

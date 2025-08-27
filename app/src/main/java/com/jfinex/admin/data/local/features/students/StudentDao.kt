@@ -1,4 +1,4 @@
-package com.jfinex.admin.data.local.students
+package com.jfinex.admin.data.local.features.students
 
 import androidx.room.Dao
 import androidx.room.Insert

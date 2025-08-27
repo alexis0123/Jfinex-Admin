@@ -18,14 +18,16 @@ class StudentViewModel @Inject constructor(
     private val studentRepo: StudentRepository,
     private val fieldRepo: FieldRepository
 ): ViewModel() {
-    private val fields: StateFlow<List<Field>> = fieldRepo.getAll()
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    val fields: StateFlow<List<Field>> = fieldRepo.getAll()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     fun addStudent(name: String, block: String) {
         viewModelScope.launch {
-            val receiptNumbers = mutableMapOf<String, Int>()
-            fields.value.forEach { field ->
-                receiptNumbers += mapOf(field.name to (field.newBase..9_999).random())
+
+            if (fields.value.isEmpty()) return@launch
+
+            val receiptNumbers = fields.value.associate { field ->
+                field.name to (field.newBase..field.newBase + 9_999).random()
             }
             studentRepo.insert(
                 Student(

@@ -20,12 +20,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.jfinex.admin.R
 import com.jfinex.admin.ui.pager.page.collection.CollectionPage
-import com.jfinex.admin.ui.pager.page.recent.RecentPage
+import com.jfinex.admin.ui.pager.page.activity.ActivityPage
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PagerNav() {
-    val tabs = listOf("Recent", "Collection")
+    val tabs = listOf("Activity", "Collection")
     val pagerState = rememberPagerState(initialPage = 1, pageCount = { tabs.size })
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -55,7 +55,7 @@ fun PagerNav() {
                 modifier = Modifier.fillMaxSize()
             ) { page ->
                 when (page) {
-                    0 -> RecentPage()
+                    0 -> ActivityPage()
                     1 -> CollectionPage()
                 }
             }

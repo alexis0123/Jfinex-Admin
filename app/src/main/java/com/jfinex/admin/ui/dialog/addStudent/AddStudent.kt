@@ -1,22 +1,30 @@
 package com.jfinex.admin.ui.dialog.addStudent
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,77 +60,114 @@ fun AddStudent(
     }
 
     Dialog(onDismissRequest = onDismiss) {
-        StyledCard {
+        StyledCard(
+            title = "Add Student",
+            cardHeight = 300.dp
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp, vertical = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = formattedName)
 
-                OutlinedTextField(
-                    value = block,
-                    onValueChange = {
-                        block = it.take(2).uppercase()
-                        blockWarning = false
-                    },
-                    label = { Text("Block") },
-                    isError = blockWarning,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Characters
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(70.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = block,
+                        onValueChange = {
+                            block = it.take(2).uppercase()
+                            blockWarning = false
+                        },
+                        label = { Text("Block") },
+                        isError = blockWarning,
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Characters
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.weight(0.29f)
+                    )
+                    Spacer(modifier = Modifier.weight(0.01f))
+                    Surface(
+                        modifier = Modifier
+                            .weight(0.7f)
+                            .height(63.dp)
+                            .offset(y = 3.dp)
+                            .padding(5.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, Color.Black),
+                        color = MaterialTheme.colorScheme.secondary
+                    ) {
+                        Text(
+                            text = formattedName,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
 
-                OutlinedTextField(
-                    value = lastName,
-                    onValueChange = {
-                        lastName = it
-                        lastNameWarning = false
-                    },
-                    label = { Text("Last Name") },
-                    isError = lastNameWarning,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Words
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = lastName,
+                        onValueChange = {
+                            lastName = it
+                            lastNameWarning = false
+                        },
+                        label = { Text("Surname") },
+                        isError = lastNameWarning,
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Words
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.weight(0.34f)
+                    )
 
-                OutlinedTextField(
-                    value = firstName,
-                    onValueChange = {
-                        firstName = it
-                        firstNameWarning = false
-                    },
-                    label = { Text("First Name") },
-                    isError = firstNameWarning,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Words
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    Spacer(modifier = Modifier.weight(0.01f))
 
-                OutlinedTextField(
-                    value = middleInitial,
-                    onValueChange = {
-                        middleInitial = it.take(1).uppercase()
-                        middleInitialWarning = false
-                    },
-                    label = { Text("Middle Initial") },
-                    isError = middleInitialWarning,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Characters
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    OutlinedTextField(
+                        value = firstName,
+                        onValueChange = {
+                            firstName = it
+                            firstNameWarning = false
+                        },
+                        label = { Text("Name") },
+                        isError = firstNameWarning,
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Words
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.weight(0.34f)
+                    )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.weight(0.01f))
+
+                    OutlinedTextField(
+                        value = middleInitial,
+                        onValueChange = {
+                            middleInitial = it.take(1).uppercase()
+                            middleInitialWarning = false
+                        },
+                        label = { Text("MI") },
+                        isError = middleInitialWarning,
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Characters
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.weight(0.2f)
+                    )
+                }
+
+                HorizontalDivider(color = Color.Black)
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,

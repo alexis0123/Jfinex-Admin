@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -26,9 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,8 +50,9 @@ fun ActivityPage(
 ) {
 
     val userName by userViewModel.user.collectAsState()
-    val activities by activityViewModel.sample.collectAsState()
-    var query by remember { mutableStateOf("") }
+    val activities by activityViewModel.results.collectAsState()
+    val query by activityViewModel.query.collectAsState()
+    val isLoading by activityViewModel.isLoading.collectAsState()
 
     val focusManager = LocalFocusManager.current
 
@@ -68,11 +68,13 @@ fun ActivityPage(
     ) {
         Box(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(15.dp)
                 .height(40.dp)
                 .width(120.dp)
-                .border(width = 1.dp, color = Color.Black,
-                    shape = RoundedCornerShape(32.dp))
+                .border(
+                    width = 1.dp, color = Color.Black,
+                    shape = RoundedCornerShape(32.dp)
+                )
                 .align(Alignment.TopStart)
                 .padding(horizontal = 10.dp)
         ) { Text(
@@ -143,7 +145,7 @@ fun ActivityPage(
                             ),
                             modifier = Modifier.clickable(
                                 onClick = {
-                                    query = ""
+                                    activityViewModel.clear()
                                     focusManager.clearFocus()
                                 }
                             )
@@ -151,7 +153,7 @@ fun ActivityPage(
                     }
                     CollectionTextField(
                         value = query,
-                        onValueChange = { query = it },
+                        onValueChange = { activityViewModel.updateQuery(it) },
                         placeholder = "Search by Student Name",
                         isEnabled = true,
                         warning = false,
@@ -160,60 +162,74 @@ fun ActivityPage(
                 }
             }
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(15.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(345.dp)
-            ) {
-                if (activities.isEmpty()) {
-                    item {
-                        Text("No Activities")
-                    }
-                }
-                items(activities) { activity ->
-                    Surface (
-                        color = when {
-                            activity.type == "Receipt" && activity.officerName == userName?.name ->
-                                Color.White
-
-                            activity.type == "Receipt" ->
-                                Color.White.copy(alpha = 0.5f)
-
-                            activity.type == "Voided Receipt" ->
-                                Color.Red.copy(alpha = 0.2f)
-
-                            else ->
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                        },
-                        shape = RoundedCornerShape(10.dp),
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(345.dp)) {
+                if (isLoading) {
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(120.dp)
-                            .border(
-                                width = 1.dp,
-                                color = Color.Black,
-                                shape = RoundedCornerShape(10.dp)
-                            )
+                            .fillMaxSize()
+                            .padding(bottom = 200.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(10.dp)
-                        ) {
-                            if (activity.type == "Receipt" || activity.type == "Voided Receipt"){
-                                Text(activity.block)
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                        CircularProgressIndicator(strokeWidth = 5.dp)
+                    }
+                } else {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(15.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        if (activities.isEmpty()) {
+                            item {
+                                Text("No Activities")
+                            }
+                        }
+                        items(activities) { activity ->
+                            Surface(
+                                color = when {
+                                    activity.type == "Receipt" && activity.officerName == userName?.name ->
+                                        Color.White
+
+                                    activity.type == "Receipt" ->
+                                        Color.White.copy(alpha = 0.5f)
+
+                                    activity.type == "Voided Receipt" ->
+                                        Color.Red.copy(alpha = 0.2f)
+
+                                    else ->
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                },
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(120.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.Black,
+                                        shape = RoundedCornerShape(10.dp)
+                                    )
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(10.dp)
                                 ) {
-                                    Text("${activity.receiptNumber}")
-                                    Text(formattedDate(activity.date))
+                                    if (activity.type == "Receipt" || activity.type == "Voided Receipt") {
+                                        Text(activity.block)
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text("${activity.receiptNumber}")
+                                            Text(formattedDate(activity.date))
+                                        }
+                                        Text("   ${activity.name}")
+                                        Text(
+                                            text = "   ${activity.item}${if (activity.category != "Paid" && !activity.category.isNullOrBlank()) " (${activity.category})" else ""}"
+                                        )
+                                    }
                                 }
-                                Text("   ${activity.name}")
-                                Text(
-                                    text = "   ${activity.item}${if (activity.category != "Paid" && !activity.category.isNullOrBlank()) " (${activity.category})" else ""}"
-                                )
                             }
                         }
                     }

@@ -66,6 +66,21 @@ fun ActivityPage(
                 focusManager.clearFocus()
             }
     ) {
+        Box(
+            modifier = Modifier
+                .padding(10.dp)
+                .height(40.dp)
+                .width(120.dp)
+                .border(width = 1.dp, color = Color.Black,
+                    shape = RoundedCornerShape(32.dp))
+                .align(Alignment.TopStart)
+                .padding(horizontal = 10.dp)
+        ) { Text(
+            text = "Export",
+            color = Color.Gray,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.align(Alignment.Center)
+        ) }
         Column(
             modifier = Modifier
                 .fillMaxSize()

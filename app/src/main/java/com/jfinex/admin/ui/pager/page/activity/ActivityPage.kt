@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,6 +36,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -87,20 +89,21 @@ fun ActivityPage(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
-                Box(
+                Column(
                     modifier = Modifier
                         .weight(0.25f)
-                        .height(60.dp)
-                        .background(
-                            color = Color.LightGray,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Color.Black,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                ) {}
+                        .fillMaxHeight()
+                ) {
+                    Text("   Filter", fontWeight = FontWeight.Bold)
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.65f)
+                            .background(Color.LightGray, shape = RoundedCornerShape(10.dp))
+                            .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(0.02f))
 
@@ -115,7 +118,7 @@ fun ActivityPage(
                             .padding(end = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(" ", fontWeight = FontWeight.Bold)
+                        Text("   Search", fontWeight = FontWeight.Bold)
                         if (query.isNotBlank()) Text(
                             text = "Clear",
                             fontWeight = FontWeight.Bold,
@@ -137,8 +140,7 @@ fun ActivityPage(
                         placeholder = "Search by Student Name",
                         isEnabled = true,
                         warning = false,
-                        modifier = Modifier
-                            .weight(0.65f)
+                        modifier = Modifier.weight(0.65f)
                     )
                 }
             }

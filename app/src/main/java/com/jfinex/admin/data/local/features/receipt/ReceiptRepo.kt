@@ -6,7 +6,7 @@ import javax.inject.Inject
 class ReceiptRepo @Inject constructor(
     private val dao: ReceiptDao
 ) {
-    suspend fun addCollection(
+    suspend fun addReceipt(
         date: LocalDate,
         name: String,
         block: String,
@@ -27,4 +27,9 @@ class ReceiptRepo @Inject constructor(
             )
         )
     }
+
+    suspend fun removeReceipt(receipt: Receipt) {
+        dao.removeReceipt(receipt = receipt)
+    }
+
 }

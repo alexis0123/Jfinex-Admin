@@ -37,14 +37,21 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
+import com.jfinex.admin.data.local.components.dateToday
+import com.jfinex.admin.data.local.features.collection.CollectionViewModel
+import com.jfinex.admin.data.local.features.students.Student
 import com.jfinex.admin.data.local.features.user.UserViewModel
 import com.jfinex.admin.ui.dialog.setUser.SetUserName
+import com.jfinex.admin.ui.pager.page.collection.dialog.GenerateReceipt
+import com.jfinex.admin.ui.pager.page.collection.dialog.ReceiptViewModel
 
 @Composable
 fun CollectionPage(
     studentViewModel: StudentSearchViewModel = hiltViewModel(),
     fieldViewModel: FieldViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel(),
+    receiptViewModel: ReceiptViewModel = hiltViewModel(),
+    collectionViewModel: CollectionViewModel = hiltViewModel()
 ) {
     val block by studentViewModel.blockFilter.collectAsState()
     val name by studentViewModel.query.collectAsState()
@@ -55,16 +62,14 @@ fun CollectionPage(
     val isLoading by studentViewModel.isLoading.collectAsState()
     val user by userViewModel.user.collectAsState()
     val newUser by userViewModel.isNewUser.collectAsState()
+    var selectedStudent by remember { mutableStateOf<Student?>(null) }
     var showResults by remember { mutableStateOf(false) }
     var showEmptyFieldWarning by remember { mutableStateOf(false) }
     var showEmptyStudentWarning by remember { mutableStateOf(false) }
     var showNoConfigWarning by remember { mutableStateOf(false) }
+    var showDisplayReceipt by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
-
-    if (newUser) {
-        SetUserName()
-    }
 
     Box(
         modifier = Modifier
@@ -79,11 +84,13 @@ fun CollectionPage(
     ) {
         Box(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(15.dp)
                 .height(40.dp)
                 .width(120.dp)
-                .border(width = 1.dp, color = Color.Black,
-                    shape = RoundedCornerShape(32.dp))
+                .border(
+                    width = 1.dp, color = Color.Black,
+                    shape = RoundedCornerShape(32.dp)
+                )
                 .align(Alignment.TopEnd)
                 .padding(horizontal = 10.dp)
         ) { Text(
@@ -267,7 +274,9 @@ fun CollectionPage(
                         DropdownMenu(
                             expanded = showDropDown,
                             onDismissRequest = { showDropDown = false },
-                            modifier = Modifier.width(330.dp).heightIn(max = 185.dp)
+                            modifier = Modifier
+                                .width(330.dp)
+                                .heightIn(max = 185.dp)
                         ) {
                             field.categories.forEach { category ->
                                 DropdownMenuItem(
@@ -299,7 +308,33 @@ fun CollectionPage(
                             selectedFields.isEmpty() ->
                                 showEmptyFieldWarning = true
 
-                            else -> {}
+                            else -> {
+                                val date = dateToday()
+                                selectedFields.forEach { (item, category) ->
+                                    val receiptNumber = selectedStudent!!.receiptNumber[item]!!
+
+                                    receiptViewModel.generateReceipt(
+                                        date = date,
+                                        name = selectedStudent!!.name,
+                                        block = selectedStudent!!.block,
+                                        officerName = user!!.name,
+                                        item = item,
+                                        category = category,
+                                        receiptNumber = receiptNumber
+                                    )
+                                    collectionViewModel.addCollection(
+                                        type = "Receipt",
+                                        date = date,
+                                        name = selectedStudent!!.name,
+                                        block = selectedStudent!!.block,
+                                        officerName = user!!.name,
+                                        item = item,
+                                        category = category,
+                                        receiptNumber = receiptNumber
+                                    )
+                                }
+                                showDisplayReceipt = true
+                            }
                         }
                         focusManager.clearFocus()
                     },
@@ -367,6 +402,7 @@ fun CollectionPage(
                                             studentViewModel.updateBlock(student.block)
                                             focusManager.clearFocus()
                                             studentViewModel.selectStudent()
+                                            selectedStudent = student
                                             showResults = false
                                         }
                                 ) {
@@ -405,4 +441,22 @@ fun CollectionPage(
             }
         }
     }
+
+    if (newUser) {
+        SetUserName()
+    }
+
+    if (showDisplayReceipt) {
+        GenerateReceipt(
+            onDismiss = {
+                showDisplayReceipt = false
+                studentViewModel.clear()
+                fieldViewModel.clear()
+            },
+            officerName = user!!.name,
+            student = selectedStudent!!,
+            fields = selectedFields
+        )
+    }
+
 }

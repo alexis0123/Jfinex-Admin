@@ -13,13 +13,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,14 +38,18 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.jfinex.admin.data.local.components.formattedDate
+import com.jfinex.admin.data.local.features.user.UserViewModel
 import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
 
 @Composable
 fun ActivityPage(
-    viewModel: ActivitiesViewModel = hiltViewModel()
+    activityViewModel: ActivitiesViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
 
-    val activities by viewModel.sample.collectAsState()
+    val userName by userViewModel.user.collectAsState()
+    val activities by activityViewModel.sample.collectAsState()
     var query by remember { mutableStateOf("") }
 
     val focusManager = LocalFocusManager.current
@@ -74,6 +79,7 @@ fun ActivityPage(
                     modifier = Modifier.offset(1.dp, 1.dp)
                 )
             }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -81,7 +87,6 @@ fun ActivityPage(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
-
                 Box(
                     modifier = Modifier
                         .weight(0.25f)
@@ -150,27 +155,50 @@ fun ActivityPage(
                     }
                 }
                 items(activities) { activity ->
-                    Box(
+                    Surface (
+                        color = when {
+                            activity.type == "Receipt" && activity.officerName == userName?.name ->
+                                Color.White
+
+                            activity.type == "Receipt" ->
+                                Color.White.copy(alpha = 0.5f)
+
+                            activity.type == "Voided Receipt" ->
+                                Color.Red.copy(alpha = 0.2f)
+
+                            else ->
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        },
+                        shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(95.dp)
-                            .background(
-                                color = when {
-                                    activity.type == "Receipt" ->
-                                        Color.White
-
-                                    else ->
-                                        Color.LightGray
-                                },
-                                shape = RoundedCornerShape(10.dp)
-                            )
+                            .height(120.dp)
                             .border(
                                 width = 1.dp,
                                 color = Color.Black,
                                 shape = RoundedCornerShape(10.dp)
                             )
                     ) {
-
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp)
+                        ) {
+                            if (activity.type == "Receipt" || activity.type == "Voided Receipt"){
+                                Text(activity.block)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("${activity.receiptNumber}")
+                                    Text(formattedDate(activity.date))
+                                }
+                                Text("   ${activity.name}")
+                                Text(
+                                    text = "   ${activity.item}${if (activity.category != "Paid" && !activity.category.isNullOrBlank()) " (${activity.category})" else ""}"
+                                )
+                            }
+                        }
                     }
                 }
             }

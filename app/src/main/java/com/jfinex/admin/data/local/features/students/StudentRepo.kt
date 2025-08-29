@@ -9,4 +9,7 @@ class StudentRepository @Inject constructor(
     fun getAll(): Flow<List<Student>> = dao.getStudents()
     suspend fun insert(student: Student) = dao.insert(student)
     suspend fun clear() = dao.clear()
+    suspend fun getStudent(name: String, block: String): Student? {
+        return dao.getStudent(name = name, block = block)
+    }
 }

@@ -14,5 +14,6 @@ data class Collection(
     val officerName: String,
     val item: String? = null,
     val category: String? = null,
-    val receiptNumber: Int? = null
+    val receiptNumber: Int? = null,
+    val new: Boolean = true
 )

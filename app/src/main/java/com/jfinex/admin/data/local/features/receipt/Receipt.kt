@@ -13,5 +13,6 @@ data class Receipt(
     val item: String,
     val category: String,
     val receiptNumber: Int,
-    val officerName: String
+    val officerName: String,
+    val new: Boolean = true
 )

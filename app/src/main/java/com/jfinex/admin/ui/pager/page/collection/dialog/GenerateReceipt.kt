@@ -48,7 +48,18 @@ fun GenerateReceipt(
     val existing by viewModel.alreadyExists.collectAsState()
 
     Dialog(onDismissRequest = onDismiss) {
-        StyledCard(title = "Receipts Generated Successfully") {
+        StyledCard(
+            title = if (newCollections.isNotEmpty()) { "Receipts Generated Successfully" }
+            else { "Failed to Generate New Receipt" },
+            cardHeight = when {
+                newCollections.size + existing.size == 1 ->
+                    220.dp
+                newCollections.size + existing.size == 2 ->
+                    360.dp
+                else ->
+                    520.dp
+            }
+        ) {
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally,

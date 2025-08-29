@@ -3,6 +3,7 @@ package com.jfinex.admin.ui.pager
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -16,6 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.jfinex.admin.ui.dialog.about.About
 import com.jfinex.admin.ui.dialog.addStudent.AddStudent
 import com.jfinex.admin.ui.dialog.createConfig.CreateConfigDialog
 import com.jfinex.admin.ui.dialog.importConfig.ImportConfig
@@ -26,6 +29,7 @@ fun OptionsMenu() {
     var showCreateConfig by remember { mutableStateOf(false) }
     var showAddStudent by remember { mutableStateOf(false) }
     var showImportConfig by remember { mutableStateOf(false) }
+    var showAbout by remember { mutableStateOf(false) }
 
     if (showCreateConfig) {
         CreateConfigDialog(
@@ -42,6 +46,12 @@ fun OptionsMenu() {
     if (showImportConfig) {
         ImportConfig(
             onDismiss = { showImportConfig = false }
+        )
+    }
+
+    if (showAbout) {
+        About(
+            onDismiss = { showAbout = false }
         )
     }
 
@@ -79,7 +89,13 @@ fun OptionsMenu() {
                         showAddStudent = true
                     }
                 )
-
+                DropdownMenuItem(
+                    text = { Text("About") },
+                    onClick = {
+                        expanded = false
+                        showAbout = true
+                    }
+                )
             }
         }
     }

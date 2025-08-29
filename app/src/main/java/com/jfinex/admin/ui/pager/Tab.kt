@@ -38,7 +38,7 @@ fun FloatingPageTitle(tabs: List<String>, pagerState: PagerState) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.secondary)
             .padding(top = 110.dp)
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 13.dp)
             .padding(start = 17.dp),
         horizontalArrangement = Arrangement.Absolute.SpaceBetween
     ) {

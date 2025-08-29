@@ -2,10 +2,14 @@ package com.jfinex.admin.ui.dialog.addStudent
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfinex.admin.data.local.components.dateToday
+import com.jfinex.admin.data.local.features.collection.CollectionRepo
 import com.jfinex.admin.data.local.features.fields.Field
 import com.jfinex.admin.data.local.features.fields.FieldRepository
 import com.jfinex.admin.data.local.features.students.Student
 import com.jfinex.admin.data.local.features.students.StudentRepository
+import com.jfinex.admin.data.local.features.user.User
+import com.jfinex.admin.data.local.features.user.UserRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,15 +20,25 @@ import javax.inject.Inject
 @HiltViewModel
 class StudentViewModel @Inject constructor(
     private val studentRepo: StudentRepository,
-    private val fieldRepo: FieldRepository
+    private val fieldRepo: FieldRepository,
+    private val collectionRepo: CollectionRepo,
+    private val userRepo: UserRepo
 ): ViewModel() {
+
+    private val user: StateFlow<User?> = userRepo.getUser()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
     val fields: StateFlow<List<Field>> = fieldRepo.getAll()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     fun addStudent(name: String, block: String) {
         viewModelScope.launch {
 
+            val existingStudent = studentRepo.getStudent(name = name, block = block)
+
             if (fields.value.isEmpty()) return@launch
+
+            if (existingStudent != null) return@launch
 
             val receiptNumbers = fields.value.associate { field ->
                 field.name to (field.newBase..field.newBase + 9_999).random()
@@ -35,6 +49,12 @@ class StudentViewModel @Inject constructor(
                     name = name,
                     receiptNumber = receiptNumbers
                 )
+            )
+            collectionRepo.addStudent(
+                date = dateToday(),
+                name = name,
+                block = block,
+                officerName = user.value!!.name
             )
         }
     }

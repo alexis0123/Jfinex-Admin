@@ -50,4 +50,10 @@ class CollectionViewModel @Inject constructor(
         )
     }
 
+    fun delete(collection: Collection) {
+        viewModelScope.launch {
+            repo.delete(collection = collection)
+        }
+    }
+
 }

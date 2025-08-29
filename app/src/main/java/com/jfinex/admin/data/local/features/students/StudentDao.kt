@@ -17,4 +17,7 @@ interface StudentDao {
     @Query("DELETE FROM students")
     suspend fun clear()
 
+    @Query("SELECT * FROM students WHERE name = :name AND block = :block")
+    suspend fun getStudent(name: String, block: String): Student?
+
 }

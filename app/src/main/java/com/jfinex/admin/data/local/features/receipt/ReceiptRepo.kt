@@ -32,4 +32,8 @@ class ReceiptRepo @Inject constructor(
         dao.removeReceipt(receipt = receipt)
     }
 
+    suspend fun getReceipt(name: String, block: String, item: String): Receipt? {
+        return dao.getReceipt(name = name, block = block, item = item)
+    }
+
 }

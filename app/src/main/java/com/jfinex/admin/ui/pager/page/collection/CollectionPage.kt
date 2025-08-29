@@ -37,12 +37,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
-import com.jfinex.admin.data.local.components.dateToday
 import com.jfinex.admin.data.local.features.collection.CollectionViewModel
 import com.jfinex.admin.data.local.features.students.Student
 import com.jfinex.admin.data.local.features.user.UserViewModel
 import com.jfinex.admin.ui.dialog.setUser.SetUserName
 import com.jfinex.admin.ui.pager.page.collection.dialog.GenerateReceipt
+import com.jfinex.admin.ui.pager.page.collection.dialog.ReceiptGeneratorViewModel
 import com.jfinex.admin.ui.pager.page.collection.dialog.ReceiptViewModel
 
 @Composable
@@ -50,8 +50,7 @@ fun CollectionPage(
     studentViewModel: StudentSearchViewModel = hiltViewModel(),
     fieldViewModel: FieldViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
-    receiptViewModel: ReceiptViewModel = hiltViewModel(),
-    collectionViewModel: CollectionViewModel = hiltViewModel()
+    receiptGeneratorViewModel: ReceiptGeneratorViewModel = hiltViewModel()
 ) {
     val block by studentViewModel.blockFilter.collectAsState()
     val name by studentViewModel.query.collectAsState()
@@ -71,6 +70,21 @@ fun CollectionPage(
 
     val focusManager = LocalFocusManager.current
 
+    if (newUser) {
+        SetUserName()
+    }
+
+    if (showDisplayReceipt) {
+        GenerateReceipt(
+            onDismiss = {
+                showDisplayReceipt = false
+                receiptGeneratorViewModel.clear()
+                studentViewModel.clear()
+                fieldViewModel.clear()
+            }
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -84,9 +98,9 @@ fun CollectionPage(
     ) {
         Box(
             modifier = Modifier
-                .padding(15.dp)
+                .padding(13.dp)
                 .height(40.dp)
-                .width(120.dp)
+                .width(100.dp)
                 .border(
                     width = 1.dp, color = Color.Black,
                     shape = RoundedCornerShape(32.dp)
@@ -309,31 +323,18 @@ fun CollectionPage(
                                 showEmptyFieldWarning = true
 
                             else -> {
-                                val date = dateToday()
                                 selectedFields.forEach { (item, category) ->
                                     val receiptNumber = selectedStudent!!.receiptNumber[item]!!
-
-                                    receiptViewModel.generateReceipt(
-                                        date = date,
-                                        name = selectedStudent!!.name,
-                                        block = selectedStudent!!.block,
+                                    receiptGeneratorViewModel.generateReceipt(
+                                        name = name,
+                                        block = block!!,
                                         officerName = user!!.name,
                                         item = item,
                                         category = category,
                                         receiptNumber = receiptNumber
                                     )
-                                    collectionViewModel.addCollection(
-                                        type = "Receipt",
-                                        date = date,
-                                        name = selectedStudent!!.name,
-                                        block = selectedStudent!!.block,
-                                        officerName = user!!.name,
-                                        item = item,
-                                        category = category,
-                                        receiptNumber = receiptNumber
-                                    )
+                                    showDisplayReceipt = true
                                 }
-                                showDisplayReceipt = true
                             }
                         }
                         focusManager.clearFocus()
@@ -441,22 +442,4 @@ fun CollectionPage(
             }
         }
     }
-
-    if (newUser) {
-        SetUserName()
-    }
-
-    if (showDisplayReceipt) {
-        GenerateReceipt(
-            onDismiss = {
-                showDisplayReceipt = false
-                studentViewModel.clear()
-                fieldViewModel.clear()
-            },
-            officerName = user!!.name,
-            student = selectedStudent!!,
-            fields = selectedFields
-        )
-    }
-
 }

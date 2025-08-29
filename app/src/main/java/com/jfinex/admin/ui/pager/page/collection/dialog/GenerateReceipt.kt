@@ -56,6 +56,8 @@ fun GenerateReceipt(
                     220.dp
                 newCollections.size + existing.size == 2 ->
                     360.dp
+                newCollections.size + existing.size == 3 ->
+                    500.dp
                 else ->
                     520.dp
             }

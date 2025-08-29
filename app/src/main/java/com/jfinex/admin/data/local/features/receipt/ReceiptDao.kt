@@ -4,12 +4,16 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface ReceiptDao {
 
     @Insert
     suspend fun addReceipt(receipt: Receipt)
+
+    @Update
+    suspend fun updateReceipt(receipt: Receipt)
 
     @Delete
     suspend fun removeReceipt(receipt: Receipt)

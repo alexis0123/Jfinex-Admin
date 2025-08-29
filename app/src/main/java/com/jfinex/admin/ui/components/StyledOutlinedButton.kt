@@ -21,6 +21,6 @@ fun StyledOutlinedButton(
         border = BorderStroke(1.dp, Color.Black),
         modifier = modifier
     ) {
-        Text(name)
+        Text(text = name, color = Color.Black)
     }
 }

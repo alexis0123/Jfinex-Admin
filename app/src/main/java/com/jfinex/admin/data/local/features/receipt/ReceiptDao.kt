@@ -17,4 +17,18 @@ interface ReceiptDao {
     @Query("SELECT * FROM receipt")
     suspend fun getAllReceipt(): List<Receipt>
 
+    @Query(
+        """
+        SELECT * FROM receipt
+        WHERE name = :name 
+          AND block = :block 
+          AND item = :item
+        """
+    )
+    suspend fun getReceipt(
+        name: String,
+        block: String,
+        item: String
+    ): Receipt?
+
 }

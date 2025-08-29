@@ -46,7 +46,7 @@ fun ImportConfig(
         viewModel.reset()
     }) {
         StyledCard(
-            title = "Import Config",
+            title = "WARNING: New Config clears data",
             cardHeight = 200.dp
         ) {
             Column(

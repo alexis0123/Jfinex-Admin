@@ -19,6 +19,9 @@ interface CollectionDao {
     @Update
     suspend fun updateCollection(collection: Collection)
 
+    @Query("DELETE FROM collections")
+    suspend fun clear()
+
     @Query("SELECT * FROM collections")
     fun getAllCollections(): Flow<List<Collection>>
 

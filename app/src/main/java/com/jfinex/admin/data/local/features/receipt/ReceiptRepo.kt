@@ -36,4 +36,6 @@ class ReceiptRepo @Inject constructor(
         return dao.getReceipt(name = name, block = block, item = item)
     }
 
+    suspend fun clear() = dao.clear()
+
 }

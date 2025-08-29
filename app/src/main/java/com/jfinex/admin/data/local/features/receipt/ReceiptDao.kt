@@ -17,6 +17,9 @@ interface ReceiptDao {
     @Query("SELECT * FROM receipt")
     suspend fun getAllReceipt(): List<Receipt>
 
+    @Query("DELETE FROM receipt")
+    suspend fun clear()
+
     @Query(
         """
         SELECT * FROM receipt

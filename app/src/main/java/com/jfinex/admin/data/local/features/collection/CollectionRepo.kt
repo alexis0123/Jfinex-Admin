@@ -51,6 +51,8 @@ class CollectionRepo @Inject constructor(
         dao.deleteCollection(collection)
     }
 
+    suspend fun clear() = dao.clear()
+
     suspend fun update(collection: Collection) {
         dao.updateCollection(collection = collection)
     }

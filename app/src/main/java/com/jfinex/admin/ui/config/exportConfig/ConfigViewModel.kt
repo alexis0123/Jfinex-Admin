@@ -4,8 +4,10 @@ import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfinex.admin.data.local.features.collection.CollectionRepo
 import com.jfinex.admin.data.local.features.fields.Field
 import com.jfinex.admin.data.local.features.fields.FieldRepository
+import com.jfinex.admin.data.local.features.receipt.ReceiptRepo
 import com.jfinex.admin.data.local.features.students.Student
 import com.jfinex.admin.data.local.features.students.StudentRepository
 import com.jfinex.admin.ui.config.components.xor.xorDe
@@ -23,7 +25,9 @@ import javax.inject.Inject
 class ConfigViewModel @Inject constructor(
     val configRepo: ConfigRepository,
     private val fieldRepo: FieldRepository,
-    private val studentRepo: StudentRepository
+    private val studentRepo: StudentRepository,
+    private val collectionRepo: CollectionRepo,
+    private val receiptRepo: ReceiptRepo
 ) : ViewModel() {
 
     private val _exportResult = MutableStateFlow<Result<Unit>?>(null)
@@ -76,6 +80,8 @@ class ConfigViewModel @Inject constructor(
                 _isLoading.value = false
                 fieldRepo.clear()
                 studentRepo.clear()
+                receiptRepo.clear()
+                collectionRepo.clear()
 
                 config.fields.forEach { (fieldName, categories) ->
                     val newBase = config.newBaseNumbers[fieldName] ?: 0

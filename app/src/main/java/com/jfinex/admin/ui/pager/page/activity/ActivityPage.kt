@@ -15,31 +15,44 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.EditOff
+import androidx.compose.material.icons.filled.FilterAltOff
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.data.local.components.formattedDate
+import com.jfinex.admin.data.local.features.collection.Collection
 import com.jfinex.admin.data.local.features.user.UserViewModel
 import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
 
@@ -53,8 +66,18 @@ fun ActivityPage(
     val activities by activityViewModel.results.collectAsState()
     val query by activityViewModel.query.collectAsState()
     val isLoading by activityViewModel.isLoading.collectAsState()
+    var showVoidConfirmation by remember { mutableStateOf(false) }
+    var selectedActivity by remember { mutableStateOf<Collection?>(null) }
 
     val focusManager = LocalFocusManager.current
+
+    if (showVoidConfirmation) {
+        VoidConfirmation(
+            collection = selectedActivity!!,
+            officerName = userName!!.name,
+            onDismiss = { showVoidConfirmation = false }
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -68,9 +91,9 @@ fun ActivityPage(
     ) {
         Box(
             modifier = Modifier
-                .padding(15.dp)
+                .padding(13.dp)
                 .height(40.dp)
-                .width(120.dp)
+                .width(100.dp)
                 .border(
                     width = 1.dp, color = Color.Black,
                     shape = RoundedCornerShape(32.dp)
@@ -114,12 +137,21 @@ fun ActivityPage(
                     Text("   Filter", fontWeight = FontWeight.Bold)
 
                     Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.65f)
-                            .background(Color.LightGray, shape = RoundedCornerShape(10.dp))
+                            .background(Color.Transparent, shape = RoundedCornerShape(10.dp))
                             .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
-                    )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FilterAltOff,
+                            contentDescription = "Filter",
+                            tint = Color.Gray,
+                            modifier = Modifier
+                                .size(30.dp)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.weight(0.02f))
@@ -195,10 +227,10 @@ fun ActivityPage(
                                         Color.White.copy(alpha = 0.5f)
 
                                     activity.type == "Voided Receipt" ->
-                                        Color.Red.copy(alpha = 0.2f)
+                                        Color.Red.copy(alpha = 0.1f)
 
                                     else ->
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                                 },
                                 shape = RoundedCornerShape(10.dp),
                                 modifier = Modifier
@@ -216,12 +248,68 @@ fun ActivityPage(
                                         .padding(10.dp)
                                 ) {
                                     if (activity.type == "Receipt" || activity.type == "Voided Receipt") {
-                                        Text(activity.block)
+                                        var visible by remember { mutableStateOf(false) }
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
-                                            Text("${activity.receiptNumber}")
+                                            Text(
+                                                text = activity.block,
+                                                modifier = Modifier.weight(0.15f)
+                                            )
+                                            Text(
+                                                text = "${activity.type} ",
+                                                fontWeight = FontWeight.Bold,
+                                                modifier = Modifier.weight(0.5f),
+                                                textAlign = TextAlign.Right
+                                            )
+                                            Text(
+                                                text = activity.officerName,
+                                                color = Color.Gray,
+                                                modifier = Modifier.weight(0.3f),
+                                                textAlign = TextAlign.Center,
+                                                overflow = TextOverflow.Ellipsis,
+                                                maxLines = 1
+                                            )
+                                            if (activity.type == "Receipt") {
+                                                Icon(
+                                                    imageVector = Icons.Default.DeleteOutline,
+                                                    contentDescription = "Clear search",
+                                                    tint = Color.Gray,
+                                                    modifier = Modifier
+                                                        .weight(0.15f)
+                                                        .clickable {
+                                                            selectedActivity = activity
+                                                            showVoidConfirmation = true
+                                                        }
+                                                )
+                                            } else {
+                                                Icon(
+                                                    imageVector = Icons.Default.EditOff,
+                                                    contentDescription = "Clear search",
+                                                    tint = Color.Gray,
+                                                    modifier = Modifier
+                                                        .size(20.dp)
+                                                )
+                                            }
+                                        }
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text("${if(visible){activity.receiptNumber}else{"******"}}")
+                                            Icon(
+                                                imageVector = if (visible) {
+                                                    Icons.Default.Visibility
+                                                } else { Icons.Default.VisibilityOff },
+                                                contentDescription = "Delete Receipt",
+                                                tint = Color.Gray,
+                                                modifier = Modifier
+                                                    .size(20.dp)
+                                                    .clickable { visible = !visible }
+                                            )
+                                            Text("           ")
+                                            Text("           ")
                                             Text(formattedDate(activity.date))
                                         }
                                         Text("   ${activity.name}")
@@ -229,6 +317,30 @@ fun ActivityPage(
                                             text = "   ${activity.item}${if (activity.category != "Paid" && !activity.category.isNullOrBlank()) " (${activity.category})" else ""}"
                                         )
                                     }
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        Text(
+                                            text = activity.type,
+                                            fontWeight = FontWeight.Bold,
+                                            textAlign = TextAlign.Right,
+                                            modifier = Modifier.weight(0.65f)
+                                        )
+                                        Text(
+                                            text = activity.officerName,
+                                            color = Color.Gray,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.weight(0.35f),
+                                            overflow = TextOverflow.Ellipsis,
+                                            maxLines = 1
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(activity.block)
+                                        Text(formattedDate(activity.date))
+                                    }
+                                    Text(activity.name)
                                 }
                             }
                         }

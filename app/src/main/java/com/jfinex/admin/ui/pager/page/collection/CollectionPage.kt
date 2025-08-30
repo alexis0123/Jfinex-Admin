@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
 import androidx.compose.material3.Button
@@ -37,13 +38,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
-import com.jfinex.admin.data.local.features.collection.CollectionViewModel
 import com.jfinex.admin.data.local.features.students.Student
 import com.jfinex.admin.data.local.features.user.UserViewModel
 import com.jfinex.admin.ui.dialog.setUser.SetUserName
-import com.jfinex.admin.ui.pager.page.collection.dialog.GenerateReceipt
-import com.jfinex.admin.ui.pager.page.collection.dialog.ReceiptGeneratorViewModel
-import com.jfinex.admin.ui.pager.page.collection.dialog.ReceiptViewModel
+import com.jfinex.admin.ui.pager.page.collection.dialog.receipt.GenerateReceipt
+import com.jfinex.admin.ui.pager.page.collection.dialog.receipt.ReceiptGeneratorViewModel
 
 @Composable
 fun CollectionPage(
@@ -255,7 +254,7 @@ fun CollectionPage(
                             Icon(
                                 imageVector = if (field.name in selectedFields)
                                     Icons.Filled.CheckBox else Icons.Filled.CheckBoxOutlineBlank,
-                                contentDescription = "Close",
+                                contentDescription = "CheckBox",
                                 modifier = Modifier
                                     .weight(0.2f)
                                     .size(50.dp)
@@ -263,7 +262,7 @@ fun CollectionPage(
                             Column(
                                 modifier = Modifier
                                     .fillMaxHeight()
-                                    .weight(0.7f),
+                                    .weight(0.5f),
                                 horizontalAlignment = Alignment.Start,
                                 verticalArrangement = Arrangement.SpaceEvenly
                             ) {
@@ -275,14 +274,36 @@ fun CollectionPage(
                                         else -> field.name
                                     },
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 17.sp
+                                    fontSize = 17.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 if (field.categories.isNotEmpty() && field.name !in selectedFields)
                                     Text(
                                         text = field.categories.joinToString(", "),
                                         color = Color.Gray,
-                                        fontSize = 12.sp
+                                        fontSize = 12.sp,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
+                            }
+                            if (field.name in selectedFields) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(0.1f)
+                                        .clickable(onClick = {}),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.AddComment,
+                                        contentDescription = "CheckBox",
+                                        tint = Color.Gray.copy(0.5f),
+                                        modifier = Modifier
+                                            .size(25.dp)
+                                    )
+                                }
                             }
                         }
                         DropdownMenu(

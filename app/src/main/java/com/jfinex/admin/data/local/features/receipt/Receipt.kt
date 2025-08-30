@@ -14,5 +14,6 @@ data class Receipt(
     val category: String,
     val receiptNumber: Int,
     val officerName: String,
+    val comment: String = "",
     val new: Boolean = true
 )

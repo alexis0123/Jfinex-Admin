@@ -13,13 +13,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FieldViewModel @Inject constructor(
-    private val repo: FieldRepository): ViewModel() {
+    repo: FieldRepository): ViewModel() {
 
     val fields: StateFlow<List<Field>> = repo.getAll()
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val _selectedFields = MutableStateFlow<Map<String, String>>(emptyMap())
     val selectedFields: StateFlow<Map<String, String>> = _selectedFields
+
+    private val _commentPerField = MutableStateFlow<Map<String, String>>(emptyMap())
+    val commentPerField: StateFlow<Map<String, String>> = _commentPerField
 
     fun addToSelectedFields(fieldName: String, category: String) {
         _selectedFields.value += mapOf(fieldName to category)
@@ -27,10 +30,20 @@ class FieldViewModel @Inject constructor(
 
     fun removeToSelectedFields(fieldName: String) {
         _selectedFields.value -= fieldName
+        _commentPerField.value -= fieldName
     }
 
     fun clear() {
         _selectedFields.value = mapOf()
+        _commentPerField.value = mapOf()
+    }
+
+    fun addComment(fieldName: String, comment: String) {
+        if (comment.isNotBlank()) { _commentPerField.value += mapOf(fieldName to comment) }
+    }
+
+    fun removeComment(fieldName: String) {
+        _commentPerField.value -= fieldName
     }
 
 }

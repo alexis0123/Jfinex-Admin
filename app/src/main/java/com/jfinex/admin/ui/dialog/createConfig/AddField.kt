@@ -44,12 +44,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.ui.dialog.components.StyledCard
 import com.jfinex.admin.ui.field.Field
-import com.jfinex.admin.ui.field.FieldViewModel
+import com.jfinex.admin.ui.field.FieldViewModelUi
 
 @Composable
 fun AddFieldDialog(
     onDismiss: () -> Unit,
-    viewModel: FieldViewModel = hiltViewModel()
+    viewModel: FieldViewModelUi = hiltViewModel()
 ) {
     var fieldNameText by remember { mutableStateOf("") }
     var categoryText by remember { mutableStateOf("") }

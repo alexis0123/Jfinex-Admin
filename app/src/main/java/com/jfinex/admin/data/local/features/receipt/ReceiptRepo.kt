@@ -38,4 +38,6 @@ class ReceiptRepo @Inject constructor(
 
     suspend fun clear() = dao.clear()
 
+    suspend fun getAll(): List<Receipt> = dao.getAllReceipt()
+
 }

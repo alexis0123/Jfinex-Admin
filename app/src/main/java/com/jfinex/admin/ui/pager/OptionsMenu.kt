@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jfinex.admin.ui.dialog.about.About
 import com.jfinex.admin.ui.dialog.addStudent.AddStudent
+import com.jfinex.admin.ui.dialog.collectionData.CollectionData
 import com.jfinex.admin.ui.dialog.createConfig.CreateConfigDialog
 import com.jfinex.admin.ui.dialog.importConfig.ImportConfig
 
@@ -30,6 +31,7 @@ fun OptionsMenu() {
     var showAddStudent by remember { mutableStateOf(false) }
     var showImportConfig by remember { mutableStateOf(false) }
     var showAbout by remember { mutableStateOf(false) }
+    var showCollectionData by remember { mutableStateOf(false) }
 
     if (showCreateConfig) {
         CreateConfigDialog(
@@ -52,6 +54,12 @@ fun OptionsMenu() {
     if (showAbout) {
         About(
             onDismiss = { showAbout = false }
+        )
+    }
+
+    if (showCollectionData) {
+        CollectionData(
+            onDismiss = { showCollectionData = false }
         )
     }
 
@@ -80,6 +88,13 @@ fun OptionsMenu() {
                 onClick = {
                         expanded = false
                         showImportConfig = true
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Collection Data") },
+                    onClick = {
+                        expanded = false
+                        showCollectionData = true
                     }
                 )
                 DropdownMenuItem(

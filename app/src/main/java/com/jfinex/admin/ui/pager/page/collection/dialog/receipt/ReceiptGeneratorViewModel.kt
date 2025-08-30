@@ -1,18 +1,15 @@
-package com.jfinex.admin.ui.pager.page.collection.dialog
+package com.jfinex.admin.ui.pager.page.collection.dialog.receipt
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jfinex.admin.data.local.components.dateToday
 import com.jfinex.admin.data.local.features.collection.Collection
 import com.jfinex.admin.data.local.features.collection.CollectionRepo
-import com.jfinex.admin.data.local.features.collection.CollectionViewModel
-import com.jfinex.admin.data.local.features.receipt.Receipt
 import com.jfinex.admin.data.local.features.receipt.ReceiptRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel

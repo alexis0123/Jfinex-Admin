@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.pager.page.collection.dialog
+package com.jfinex.admin.ui.pager.page.collection.dialog.receipt
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Dangerous
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,13 +29,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.jfinex.admin.data.local.components.dateToday
 import com.jfinex.admin.data.local.components.formattedDate
-import com.jfinex.admin.data.local.features.collection.CollectionViewModel
-import com.jfinex.admin.data.local.features.students.Student
 import com.jfinex.admin.ui.dialog.components.StyledCard
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import com.jfinex.admin.ui.pager.page.collection.dialog.receipt.ReceiptGeneratorViewModel
 
 @Composable
 fun GenerateReceipt(

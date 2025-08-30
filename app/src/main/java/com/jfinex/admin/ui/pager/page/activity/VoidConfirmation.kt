@@ -43,7 +43,7 @@ import com.jfinex.admin.ui.components.StyledButton
 import com.jfinex.admin.ui.components.StyledOutlinedButton
 import com.jfinex.admin.ui.dialog.components.StyledCard
 import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
-import com.jfinex.admin.ui.pager.page.collection.dialog.ReceiptViewModel
+import com.jfinex.admin.ui.pager.page.collection.dialog.receipt.ReceiptViewModel
 import kotlin.text.isNullOrBlank
 
 @Composable

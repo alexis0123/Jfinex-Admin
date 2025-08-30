@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class FieldViewModel @Inject constructor(private val repo: FieldsRepository): ViewModel() {
+class FieldViewModelUi @Inject constructor(private val repo: FieldsRepository): ViewModel() {
     private val _fields = MutableStateFlow<List<Field>>(emptyList())
     val fields = _fields.asStateFlow()
 

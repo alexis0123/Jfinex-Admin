@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.ui.csv.CsvViewModel
-import com.jfinex.admin.ui.field.FieldViewModel
+import com.jfinex.admin.ui.field.FieldViewModelUi
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -59,7 +59,7 @@ import com.jfinex.admin.ui.dialog.components.StyledCard
 fun CreateConfigDialog(
     onDismiss: () -> Unit,
     csvViewModel: CsvViewModel = hiltViewModel(),
-    fieldViewModel: FieldViewModel = hiltViewModel(),
+    fieldViewModel: FieldViewModelUi = hiltViewModel(),
     configViewModel: ConfigViewModel = hiltViewModel()
 ) {
     val fields by fieldViewModel.fields.collectAsState()

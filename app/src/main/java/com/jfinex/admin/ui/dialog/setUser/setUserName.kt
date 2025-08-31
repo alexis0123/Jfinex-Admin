@@ -34,12 +34,13 @@ import com.jfinex.admin.ui.dialog.components.StyledCard
 
 @Composable
 fun SetUserName(
+    onDismiss: () -> Unit,
     viewModel: UserViewModel = hiltViewModel()
 ) {
     var name by remember { mutableStateOf("") }
     var notValidName by remember { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = {}) {
+    Dialog(onDismissRequest = onDismiss) {
         StyledCard(
             cardHeight = 150.dp,
             title = "Set User Name"

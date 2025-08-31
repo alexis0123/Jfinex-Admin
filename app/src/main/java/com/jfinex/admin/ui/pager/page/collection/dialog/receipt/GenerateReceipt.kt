@@ -2,6 +2,7 @@ package com.jfinex.admin.ui.pager.page.collection.dialog.receipt
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Icon
@@ -32,7 +34,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.data.local.components.formattedDate
 import com.jfinex.admin.ui.dialog.components.StyledCard
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.style.TextOverflow
+import com.jfinex.admin.data.local.features.collection.Collection
+import com.jfinex.admin.ui.pager.page.activity.dialog.ViewComment
 import com.jfinex.admin.ui.pager.page.collection.dialog.receipt.ReceiptGeneratorViewModel
+import kotlin.text.isNullOrBlank
 
 @Composable
 fun GenerateReceipt(
@@ -42,6 +51,15 @@ fun GenerateReceipt(
 
     val newCollections by viewModel.newCollections.collectAsState()
     val existing by viewModel.alreadyExists.collectAsState()
+    var showViewComment by remember { mutableStateOf(false) }
+    var selectedActivity by remember { mutableStateOf<Collection?>(null) }
+
+    if (showViewComment) {
+        ViewComment(
+            comment = selectedActivity?.comment ?: "",
+            onDismiss = { showViewComment = false }
+        )
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         StyledCard(
@@ -104,12 +122,34 @@ fun GenerateReceipt(
                                     Text("${collection.receiptNumber}")
                                     Text(formattedDate(collection.date))
                                 }
-                                Text("   ${collection.name}")
-                                Text(
-                                    text = "   ${collection.item}${
-                                        if (collection.category != "Paid" && collection.category!!
-                                                .isNotBlank()) " (${collection.category})" else ""}"
-                                )
+                                Text("   ${collection.name}",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(end = 10.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = "   ${collection.item}${
+                                            if (collection.category != "Paid" && !collection.category.isNullOrBlank())
+                                                " (${collection.category})" else ""}",
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    if (collection.comment.isNotBlank()) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.Comment,
+                                            contentDescription = "Delete Receipt",
+                                            tint = Color.Gray,
+                                            modifier = Modifier
+                                                .size(20.dp)
+                                                .clickable {
+                                                    selectedActivity = collection
+                                                    showViewComment = true
+                                                }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

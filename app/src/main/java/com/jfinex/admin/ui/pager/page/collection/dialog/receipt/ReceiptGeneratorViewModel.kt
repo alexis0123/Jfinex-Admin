@@ -29,7 +29,8 @@ class ReceiptGeneratorViewModel @Inject constructor(
         officerName: String,
         item: String,
         category: String,
-        receiptNumber: Int
+        receiptNumber: Int,
+        comment: String
     ) {
         viewModelScope.launch {
             val existing = receiptRepo.getReceipt(
@@ -45,7 +46,8 @@ class ReceiptGeneratorViewModel @Inject constructor(
                 officerName = officerName,
                 item = item,
                 category = category,
-                receiptNumber = receiptNumber
+                receiptNumber = receiptNumber,
+                comment = comment
             )
             if (existing == null) {
                 receiptRepo.addReceipt(
@@ -55,7 +57,8 @@ class ReceiptGeneratorViewModel @Inject constructor(
                     officerName = officerName,
                     item = item,
                     category = category,
-                    receiptNumber = receiptNumber
+                    receiptNumber = receiptNumber,
+                    comment = comment
                 )
                 collectionRepo.addCollection(
                     type = "Receipt",
@@ -65,7 +68,8 @@ class ReceiptGeneratorViewModel @Inject constructor(
                     officerName = officerName,
                     item = item,
                     category = category,
-                    receiptNumber = receiptNumber
+                    receiptNumber = receiptNumber,
+                    comment = comment
                 )
                 _newCollections.value = _newCollections.value + collection
             } else {

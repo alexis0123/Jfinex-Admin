@@ -34,6 +34,7 @@ class CollectionRepo @Inject constructor(
         item: String,
         category: String,
         receiptNumber: Int,
+        comment: String
     ) {
         dao.addCollection(Collection(
             type = type,
@@ -43,7 +44,8 @@ class CollectionRepo @Inject constructor(
             officerName = officerName,
             item = item,
             category = category,
-            receiptNumber = receiptNumber
+            receiptNumber = receiptNumber,
+            comment = comment
         ))
     }
 

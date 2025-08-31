@@ -14,6 +14,7 @@ class ReceiptRepo @Inject constructor(
         item: String,
         category: String,
         receiptNumber: Int,
+        comment: String
     ) {
         dao.addReceipt(
             Receipt(
@@ -23,7 +24,8 @@ class ReceiptRepo @Inject constructor(
                 officerName = officerName,
                 item = item,
                 category = category,
-                receiptNumber = receiptNumber
+                receiptNumber = receiptNumber,
+                comment = comment
             )
         )
     }

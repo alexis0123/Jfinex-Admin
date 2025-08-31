@@ -36,6 +36,9 @@ class StudentViewModel @Inject constructor(
 
             val existingStudent = studentRepo.getStudent(name = name, block = block)
 
+            val blockRegex = Regex("""^[1-4][A-Z]$""")
+            if (!blockRegex.matches(block)) return@launch
+
             if (fields.value.isEmpty()) return@launch
 
             if (existingStudent != null) return@launch

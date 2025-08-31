@@ -3,8 +3,10 @@ package com.jfinex.admin.ui.pager
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -22,6 +24,7 @@ import com.jfinex.admin.ui.dialog.about.About
 import com.jfinex.admin.ui.dialog.addStudent.AddStudent
 import com.jfinex.admin.ui.dialog.collectionData.CollectionData
 import com.jfinex.admin.ui.dialog.createConfig.CreateConfigDialog
+import com.jfinex.admin.ui.dialog.exportToCsv.ExportData
 import com.jfinex.admin.ui.dialog.importConfig.ImportConfig
 
 @Composable
@@ -32,6 +35,7 @@ fun OptionsMenu() {
     var showImportConfig by remember { mutableStateOf(false) }
     var showAbout by remember { mutableStateOf(false) }
     var showCollectionData by remember { mutableStateOf(false) }
+    var showExportData by remember { mutableStateOf(false) }
 
     if (showCreateConfig) {
         CreateConfigDialog(
@@ -63,17 +67,24 @@ fun OptionsMenu() {
         )
     }
 
+    if (showExportData) {
+        ExportData(
+            onDismiss = { showExportData = false }
+        )
+    }
+
     Box {
         Icon(
-            imageVector = Icons.Default.MoreVert,
+            imageVector = Icons.Default.Menu,
             contentDescription = "Options",
             tint = MaterialTheme.colorScheme.onSecondary,
-            modifier = Modifier.clickable { expanded = true }
+            modifier = Modifier.clickable { expanded = true }.size(30.dp)
         )
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.width(200.dp)
         ) {
             Column {
                 DropdownMenuItem(
@@ -95,6 +106,13 @@ fun OptionsMenu() {
                     onClick = {
                         expanded = false
                         showCollectionData = true
+                    }
+                )
+                DropdownMenuItem(
+                        text = { Text("Export Data") },
+                    onClick = {
+                        expanded = false
+                        showExportData = true
                     }
                 )
                 DropdownMenuItem(

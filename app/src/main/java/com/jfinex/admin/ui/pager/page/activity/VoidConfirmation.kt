@@ -168,7 +168,8 @@ fun VoidConfirmation(
                                 officerName = officerName,
                                 item = collection.item ?: "",
                                 category = collection.category!!,
-                                receiptNumber = collection.receiptNumber!!
+                                receiptNumber = collection.receiptNumber!!,
+                                comment = ""
                             )
                             onDismiss()
                             collectionViewModel.delete(collection)

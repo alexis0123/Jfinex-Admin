@@ -22,7 +22,11 @@ class UserViewModel @Inject constructor(
 
     fun setUserTo(name: String) {
         viewModelScope.launch {
-            repo.setUser(User(name = name))
+            val number = (1000..9999).random()
+            val firstLetter = (('A'..'Z') + ('a'..'Z')).random()
+            val code = (number.toString() + firstLetter.toString())
+                .toList().shuffled().joinToString("")
+            repo.setUser(User(name = "$name-$code"))
         }
     }
 }

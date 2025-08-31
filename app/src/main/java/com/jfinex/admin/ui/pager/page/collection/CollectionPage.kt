@@ -16,9 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -41,6 +43,7 @@ import androidx.compose.ui.zIndex
 import com.jfinex.admin.data.local.features.students.Student
 import com.jfinex.admin.data.local.features.user.UserViewModel
 import com.jfinex.admin.ui.dialog.setUser.SetUserName
+import com.jfinex.admin.ui.pager.page.collection.dialog.comment.Comment
 import com.jfinex.admin.ui.pager.page.collection.dialog.receipt.GenerateReceipt
 import com.jfinex.admin.ui.pager.page.collection.dialog.receipt.ReceiptGeneratorViewModel
 
@@ -56,21 +59,27 @@ fun CollectionPage(
     val results by studentViewModel.results.collectAsState()
     val fields by fieldViewModel.fields.collectAsState()
     val selectedFields by fieldViewModel.selectedFields.collectAsState()
+    val comments by fieldViewModel.commentPerField.collectAsState()
     val studentIsSelected by studentViewModel.studentIsSelected.collectAsState()
     val isLoading by studentViewModel.isLoading.collectAsState()
     val user by userViewModel.user.collectAsState()
     val newUser by userViewModel.isNewUser.collectAsState()
+    var userRequired by remember { mutableStateOf(false) }
     var selectedStudent by remember { mutableStateOf<Student?>(null) }
     var showResults by remember { mutableStateOf(false) }
     var showEmptyFieldWarning by remember { mutableStateOf(false) }
     var showEmptyStudentWarning by remember { mutableStateOf(false) }
     var showNoConfigWarning by remember { mutableStateOf(false) }
     var showDisplayReceipt by remember { mutableStateOf(false) }
+    var showComment by remember { mutableStateOf(false) }
+    var fieldName by remember { mutableStateOf("") }
 
     val focusManager = LocalFocusManager.current
 
-    if (newUser) {
-        SetUserName()
+    if (newUser && userRequired) {
+        SetUserName(
+            onDismiss = { userRequired = false }
+        )
     }
 
     if (showDisplayReceipt) {
@@ -80,6 +89,16 @@ fun CollectionPage(
                 receiptGeneratorViewModel.clear()
                 studentViewModel.clear()
                 fieldViewModel.clear()
+            }
+        )
+    }
+
+    if (showComment) {
+        Comment(
+            fieldName = fieldName,
+            onDismiss = {
+                showComment = false
+                fieldName = ""
             }
         )
     }
@@ -107,7 +126,7 @@ fun CollectionPage(
                 .align(Alignment.TopEnd)
                 .padding(horizontal = 10.dp)
         ) { Text(
-            text = user?.name ?: "",
+            text = user?.name?.takeLast(5) ?: "",
             color = Color.Gray,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.align(Alignment.Center)
@@ -292,14 +311,23 @@ fun CollectionPage(
                                     modifier = Modifier
                                         .fillMaxHeight()
                                         .weight(0.1f)
-                                        .clickable(onClick = {}),
+                                        .clickable(onClick = {
+                                            fieldName = field.name
+                                            showComment = true
+                                        }),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.AddComment,
-                                        contentDescription = "CheckBox",
-                                        tint = Color.Gray.copy(0.5f),
+                                        imageVector =
+                                            if (field.name in comments) {
+                                                Icons.AutoMirrored.Filled.Comment
+                                            } else { Icons.Default.AddComment },
+                                        contentDescription = "AddComment",
+                                        tint =
+                                            if (field.name in comments) {
+                                                MaterialTheme.colorScheme.secondary
+                                            } else { Color.Gray.copy(0.35f) },
                                         modifier = Modifier
                                             .size(25.dp)
                                     )
@@ -337,6 +365,9 @@ fun CollectionPage(
                             fields.isEmpty() ->
                                 showNoConfigWarning = true
 
+                            newUser ->
+                                userRequired = true
+
                             !studentIsSelected ->
                                 showEmptyStudentWarning = true
 
@@ -352,7 +383,8 @@ fun CollectionPage(
                                         officerName = user!!.name,
                                         item = item,
                                         category = category,
-                                        receiptNumber = receiptNumber
+                                        receiptNumber = receiptNumber,
+                                        comment = comments[item] ?: ""
                                     )
                                     showDisplayReceipt = true
                                 }

@@ -15,5 +15,6 @@ data class Collection(
     val item: String? = null,
     val category: String? = null,
     val receiptNumber: Int? = null,
-    val new: Boolean = true
+    val new: Boolean = true,
+    val comment: String = ""
 )

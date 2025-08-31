@@ -13,7 +13,7 @@ data class CsvResult(
     val ignored: List<List<String>>
 )
 
-private val rowPattern = Regex("""^\d+[A-Z]$""")
+private val rowPattern = Regex("""^[1-4][A-Z]$""")
 
 class CsvRepository @Inject constructor() {
 

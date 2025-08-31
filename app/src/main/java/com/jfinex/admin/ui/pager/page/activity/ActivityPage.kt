@@ -21,10 +21,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Comment
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.EditOff
 import androidx.compose.material.icons.filled.FilterAltOff
+import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,6 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.data.local.components.formattedDate
 import com.jfinex.admin.data.local.features.collection.Collection
 import com.jfinex.admin.data.local.features.user.UserViewModel
+import com.jfinex.admin.ui.pager.page.activity.dialog.ViewComment
 import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
 
 @Composable
@@ -67,6 +72,7 @@ fun ActivityPage(
     val query by activityViewModel.query.collectAsState()
     val isLoading by activityViewModel.isLoading.collectAsState()
     var showVoidConfirmation by remember { mutableStateOf(false) }
+    var showViewComment by remember { mutableStateOf(false) }
     var selectedActivity by remember { mutableStateOf<Collection?>(null) }
 
     val focusManager = LocalFocusManager.current
@@ -76,6 +82,13 @@ fun ActivityPage(
             collection = selectedActivity!!,
             officerName = userName!!.name,
             onDismiss = { showVoidConfirmation = false }
+        )
+    }
+
+    if (showViewComment) {
+        ViewComment(
+            comment = selectedActivity?.comment ?: "",
+            onDismiss = { showViewComment = false }
         )
     }
 
@@ -194,9 +207,11 @@ fun ActivityPage(
                 }
             }
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(345.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(345.dp)
+            ) {
                 if (isLoading) {
                     Box(
                         modifier = Modifier
@@ -264,33 +279,46 @@ fun ActivityPage(
                                                 textAlign = TextAlign.Right
                                             )
                                             Text(
-                                                text = activity.officerName,
+                                                text = activity.officerName.dropLast(6),
                                                 color = Color.Gray,
                                                 modifier = Modifier.weight(0.3f),
                                                 textAlign = TextAlign.Center,
                                                 overflow = TextOverflow.Ellipsis,
                                                 maxLines = 1
                                             )
-                                            if (activity.type == "Receipt") {
-                                                Icon(
-                                                    imageVector = Icons.Default.DeleteOutline,
-                                                    contentDescription = "Clear search",
-                                                    tint = Color.Gray,
-                                                    modifier = Modifier
-                                                        .weight(0.15f)
-                                                        .clickable {
-                                                            selectedActivity = activity
-                                                            showVoidConfirmation = true
-                                                        }
-                                                )
-                                            } else {
-                                                Icon(
-                                                    imageVector = Icons.Default.EditOff,
-                                                    contentDescription = "Clear search",
-                                                    tint = Color.Gray,
-                                                    modifier = Modifier
-                                                        .size(20.dp)
-                                                )
+                                            when {
+                                                activity.type == "Receipt" &&
+                                                activity.officerName == userName?.name ->
+                                                    Icon(
+                                                        imageVector = Icons.Default.DeleteOutline,
+                                                        contentDescription = "Clear search",
+                                                        tint = Color.Gray,
+                                                        modifier = Modifier
+                                                            .weight(0.15f)
+                                                            .clickable {
+                                                                selectedActivity = activity
+                                                                showVoidConfirmation = true
+                                                            }
+                                                    )
+
+                                                activity.type == "Receipt" &&
+                                                activity.officerName != userName?.name ->
+                                                    Icon(
+                                                        imageVector = Icons.Default.Check,
+                                                        contentDescription = "Check",
+                                                        tint = Color.Gray,
+                                                        modifier = Modifier
+                                                            .weight(0.15f)
+                                                    )
+
+                                                else ->
+                                                    Icon(
+                                                        imageVector = Icons.Default.EditOff,
+                                                        contentDescription = "EditOff",
+                                                        tint = Color.Gray,
+                                                        modifier = Modifier
+                                                            .weight(0.15f)
+                                                    )
                                             }
                                         }
                                         Row(
@@ -303,19 +331,52 @@ fun ActivityPage(
                                                     Icons.Default.Visibility
                                                 } else { Icons.Default.VisibilityOff },
                                                 contentDescription = "Delete Receipt",
-                                                tint = Color.Gray,
+                                                tint =
+                                                    if (activity.type == "Receipt") { Color.Gray }
+                                                    else { Color.Gray.copy(alpha = 0.3f) },
                                                 modifier = Modifier
                                                     .size(20.dp)
-                                                    .clickable { visible = !visible }
+                                                    .clickable(
+                                                        enabled = activity.type == "Receipt",
+                                                        onClick = { visible = !visible }
+                                                    )
                                             )
                                             Text("           ")
                                             Text("           ")
                                             Text(formattedDate(activity.date))
                                         }
-                                        Text("   ${activity.name}")
-                                        Text(
-                                            text = "   ${activity.item}${if (activity.category != "Paid" && !activity.category.isNullOrBlank()) " (${activity.category})" else ""}"
-                                        )
+                                        Text("   ${activity.name}",
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis)
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(end = 10.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text(
+                                                text = "   ${activity.item}${
+                                                    if (activity.category != "Paid" && !activity.category.isNullOrBlank()) 
+                                                        " (${activity.category})" else ""}",
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                            if (activity.comment.isNotBlank()) {
+                                                Icon(
+                                                    imageVector = Icons.AutoMirrored.Filled.Comment,
+                                                    contentDescription = "Delete Receipt",
+                                                    tint = Color.Gray,
+                                                    modifier = Modifier
+                                                        .size(20.dp)
+                                                        .clickable {
+                                                            selectedActivity = activity
+                                                            showViewComment = true
+                                                        }
+                                                )
+                                            }
+                                        }
+
+
                                     }
                                     Row(modifier = Modifier.fillMaxWidth()) {
                                         Text(
@@ -325,7 +386,7 @@ fun ActivityPage(
                                             modifier = Modifier.weight(0.65f)
                                         )
                                         Text(
-                                            text = activity.officerName,
+                                            text = activity.officerName.dropLast(6),
                                             color = Color.Gray,
                                             textAlign = TextAlign.Center,
                                             modifier = Modifier.weight(0.35f),

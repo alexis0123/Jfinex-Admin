@@ -10,6 +10,7 @@ import com.jfinex.admin.data.local.features.fields.FieldRepository
 import com.jfinex.admin.data.local.features.receipt.ReceiptRepo
 import com.jfinex.admin.data.local.features.students.Student
 import com.jfinex.admin.data.local.features.students.StudentRepository
+import com.jfinex.admin.data.local.features.user.UserRepo
 import com.jfinex.admin.ui.config.components.xor.xorDe
 import com.jfinex.admin.ui.config.components.xor.xorEn
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,8 @@ class ConfigViewModel @Inject constructor(
     private val fieldRepo: FieldRepository,
     private val studentRepo: StudentRepository,
     private val collectionRepo: CollectionRepo,
-    private val receiptRepo: ReceiptRepo
+    private val receiptRepo: ReceiptRepo,
+    private val userRepo: UserRepo
 ) : ViewModel() {
 
     private val _exportResult = MutableStateFlow<Result<Unit>?>(null)
@@ -82,6 +84,7 @@ class ConfigViewModel @Inject constructor(
                 studentRepo.clear()
                 receiptRepo.clear()
                 collectionRepo.clear()
+                userRepo.clear()
 
                 config.fields.forEach { (fieldName, categories) ->
                     val newBase = config.newBaseNumbers[fieldName] ?: 0

@@ -31,6 +31,9 @@ import com.jfinex.admin.ui.config.exportConfig.ConfigViewModel
 import com.jfinex.admin.ui.dialog.components.StyledCard
 import java.io.File
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun ImportConfig(
@@ -40,6 +43,7 @@ fun ImportConfig(
     val context = LocalContext.current
     val isLoading by viewModel.isLoading.collectAsState()
     val importResult by viewModel.importResult.collectAsState()
+    var showWarning by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = {
         onDismiss()
@@ -93,14 +97,21 @@ fun ImportConfig(
                     }
                 }
 
+                if (showWarning) {
+                    Warning(
+                        onConfirm = {
+                            launcher.launch(arrayOf("application/json"))
+                            viewModel.reset()
+                        },
+                        onDismiss = onDismiss
+                    )
+                }
+
                 if (isLoading) {
                     Text("Importing…")
                 } else {
                     Button(
-                        onClick = {
-                            launcher.launch(arrayOf("application/json"))
-                            viewModel.reset()
-                        },
+                        onClick = { showWarning = true },
                         shape = RoundedCornerShape(10.dp),
                         border = BorderStroke(1.dp, Color.Black),
                         modifier = Modifier.height(53.7.dp)

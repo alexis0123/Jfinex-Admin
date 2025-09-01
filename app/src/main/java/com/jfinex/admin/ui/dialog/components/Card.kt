@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,6 +33,8 @@ import androidx.compose.ui.unit.sp
 fun StyledCard(
     cardHeight: Dp = 500.dp,
     title: String = "",
+    iconWarning: Boolean = false,
+    borderWarning: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
@@ -37,7 +43,10 @@ fun StyledCard(
             .height(cardHeight),
         color = MaterialTheme.colorScheme.background,
         shape = RoundedCornerShape(15.dp),
-        border = BorderStroke(1.dp, Color.Black),
+        border =
+            if (borderWarning){
+                BorderStroke(2.dp, Color.Red)
+            } else { BorderStroke(1.dp, Color.Black) },
         shadowElevation = 2.dp
     ) {
 
@@ -56,12 +65,23 @@ fun StyledCard(
                     .background(MaterialTheme.colorScheme.secondary)
                     .padding(12.dp)
             ) {
-                Text(
-                    text = title,
-                    color = Color.LightGray,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = title,
+                        color = Color.LightGray,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    )
+                    if (iconWarning) {
+                        Icon(
+                            imageVector = Icons.Default.WarningAmber,
+                            contentDescription = "Warning"
+                        )
+                    }
+                }
             }
 
             content()

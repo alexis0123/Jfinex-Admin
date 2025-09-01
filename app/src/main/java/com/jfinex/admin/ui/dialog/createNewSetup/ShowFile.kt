@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.dialog.createConfig
+package com.jfinex.admin.ui.dialog.createNewSetup
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -38,7 +38,9 @@ fun ShowFile(
 
     Dialog(onDismissRequest = {}) {
 
-        StyledCard {
+        StyledCard(
+            title = "Valid file contents"
+        ) {
             Box(
                 modifier = Modifier
                     .height(360.dp)

@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.dialog.createConfig
+package com.jfinex.admin.ui.dialog.createNewSetup
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -123,7 +123,9 @@ fun CreateConfigDialog(
 
     Dialog(onDismissRequest = {}) {
 
-        StyledCard {
+        StyledCard(
+            title = "Create New Setup"
+        ) {
             Box(
                 modifier = Modifier
                     .height(360.dp)

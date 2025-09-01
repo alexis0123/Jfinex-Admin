@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.dialog.exportToCsv
+package com.jfinex.admin.ui.dialog.downloadData
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -77,7 +77,7 @@ fun ExportData(
 
     Dialog(onDismissRequest = onDismiss) {
         StyledCard(
-            title = "Export to CSV",
+            title = "Download Data",
             cardHeight = 270.dp
         ) {
             Column(
@@ -343,7 +343,7 @@ fun ExportData(
                                 }
                             )
                         },
-                        name = "Export to CSV",
+                        name = "Download CSV",
                         enabled = true,
                         modifier = Modifier
                             .height(60.dp)

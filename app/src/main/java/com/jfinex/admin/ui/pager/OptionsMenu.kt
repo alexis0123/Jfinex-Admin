@@ -21,9 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jfinex.admin.ui.dialog.about.About
 import com.jfinex.admin.ui.dialog.addStudent.AddStudent
-import com.jfinex.admin.ui.dialog.collectionData.CollectionData
-import com.jfinex.admin.ui.dialog.createConfig.CreateConfigDialog
-import com.jfinex.admin.ui.dialog.exportToCsv.ExportData
+import com.jfinex.admin.ui.dialog.totalsPerCategory.CollectionData
+import com.jfinex.admin.ui.dialog.createNewSetup.CreateConfigDialog
+import com.jfinex.admin.ui.dialog.downloadData.ExportData
 import com.jfinex.admin.ui.dialog.loadSetup.ImportConfig
 
 @Composable

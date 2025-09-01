@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.dialog.exportToCsv
+package com.jfinex.admin.ui.dialog.downloadData
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

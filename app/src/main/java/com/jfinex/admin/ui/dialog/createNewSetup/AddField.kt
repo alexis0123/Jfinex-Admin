@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.dialog.createConfig
+package com.jfinex.admin.ui.dialog.createNewSetup
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -59,7 +59,9 @@ fun AddFieldDialog(
     var fieldNameAlreadyExist by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = {}) {
-        StyledCard {
+        StyledCard(
+            title = "Add Field"
+        ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier

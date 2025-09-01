@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.dialog.collectionData
+package com.jfinex.admin.ui.dialog.totalsPerCategory
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,7 +54,7 @@ fun CollectionData(
 
     Dialog(onDismissRequest = onDismiss) {
         StyledCard(
-            title = "Collection Data"
+            title = "Totals"
         ) {
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,

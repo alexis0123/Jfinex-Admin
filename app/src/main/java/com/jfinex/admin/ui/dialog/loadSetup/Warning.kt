@@ -54,7 +54,7 @@ fun Warning(
             ) {
                 Text(
                     buildAnnotatedString {
-                        append("All records under username will be ")
+                        append("All saved records under username will be ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append("ERASED")
                         }

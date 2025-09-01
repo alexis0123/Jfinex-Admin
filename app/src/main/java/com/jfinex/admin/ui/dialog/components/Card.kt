@@ -78,7 +78,8 @@ fun StyledCard(
                     if (iconWarning) {
                         Icon(
                             imageVector = Icons.Default.WarningAmber,
-                            contentDescription = "Warning"
+                            contentDescription = "Warning",
+                            tint = Color.LightGray
                         )
                     }
                 }

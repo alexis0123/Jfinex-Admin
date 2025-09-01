@@ -88,28 +88,28 @@ fun OptionsMenu() {
         ) {
             Column {
                 DropdownMenuItem(
-                    text = { Text("Create Config") },
+                    text = { Text("Create New Setup") },
                     onClick = {
                         expanded = false
                         showCreateConfig = true
                     }
                 )
                 DropdownMenuItem(
-                text = { Text("Import Config") },
+                text = { Text("Load Setup") },
                 onClick = {
                         expanded = false
                         showImportConfig = true
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Collection Data") },
+                    text = { Text("Totals per Category") },
                     onClick = {
                         expanded = false
                         showCollectionData = true
                     }
                 )
                 DropdownMenuItem(
-                        text = { Text("Export Data") },
+                        text = { Text("Download Data") },
                     onClick = {
                         expanded = false
                         showExportData = true

@@ -27,10 +27,6 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun StyledCard(
-    modifier: Modifier = Modifier,
-    titleBarColor: Color = MaterialTheme.colorScheme.background,
-    cardColor: Color = MaterialTheme.colorScheme.background,
-    titleBarHeight: Dp = 50.dp,
     cardHeight: Dp = 500.dp,
     title: String = "",
     content: @Composable ColumnScope.() -> Unit

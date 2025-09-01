@@ -1,4 +1,4 @@
-package com.jfinex.admin.ui.dialog.importConfig
+package com.jfinex.admin.ui.dialog.loadSetup
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -50,7 +48,7 @@ fun ImportConfig(
         viewModel.reset()
     }) {
         StyledCard(
-            title = "WARNING: New Config clears data",
+            title = "Load New Setup",
             cardHeight = 200.dp
         ) {
             Column(
@@ -116,7 +114,7 @@ fun ImportConfig(
                         border = BorderStroke(1.dp, Color.Black),
                         modifier = Modifier.height(53.7.dp)
                     ) {
-                        Text("Import Config")
+                        Text("Select Setup File")
                     }
                 }
             }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -25,7 +24,7 @@ import com.jfinex.admin.ui.dialog.addStudent.AddStudent
 import com.jfinex.admin.ui.dialog.collectionData.CollectionData
 import com.jfinex.admin.ui.dialog.createConfig.CreateConfigDialog
 import com.jfinex.admin.ui.dialog.exportToCsv.ExportData
-import com.jfinex.admin.ui.dialog.importConfig.ImportConfig
+import com.jfinex.admin.ui.dialog.loadSetup.ImportConfig
 
 @Composable
 fun OptionsMenu() {

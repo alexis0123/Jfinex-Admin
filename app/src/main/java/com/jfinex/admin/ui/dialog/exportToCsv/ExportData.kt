@@ -198,6 +198,7 @@ fun ExportData(
                                         yearExpanded = false
                                         selectedYear = null
                                         yearAndBlock = null
+                                        selectedBlock = null
                                     }
                                 )
                                 DropdownMenuItem(
@@ -206,6 +207,7 @@ fun ExportData(
                                         yearExpanded = false
                                         selectedYear = 1
                                         yearAndBlock = null
+                                        selectedBlock = null
                                     }
                                 )
                                 DropdownMenuItem(
@@ -214,6 +216,7 @@ fun ExportData(
                                         yearExpanded = false
                                         selectedYear = 2
                                         yearAndBlock = null
+                                        selectedBlock = null
                                     }
                                 )
                                 DropdownMenuItem(
@@ -222,6 +225,7 @@ fun ExportData(
                                         yearExpanded = false
                                         selectedYear = 3
                                         yearAndBlock = null
+                                        selectedBlock = null
                                     }
                                 )
                                 DropdownMenuItem(
@@ -230,6 +234,7 @@ fun ExportData(
                                         yearExpanded = false
                                         selectedYear = 4
                                         yearAndBlock = null
+                                        selectedBlock = null
                                     }
                                 )
                             }
@@ -272,6 +277,7 @@ fun ExportData(
                                 Icons.Default.ExpandLess
                             } else { Icons.Default.ExpandMore },
                             contentDescription = "Expand",
+                            tint = if (selectedYear != null) { Color.Black } else { Color.LightGray },
                             modifier = Modifier.align(Alignment.CenterEnd)
                         )
                         DropdownMenu(
@@ -341,7 +347,7 @@ fun ExportData(
                         enabled = true,
                         modifier = Modifier
                             .height(60.dp)
-                            .width(160.dp)
+                            .width(170.dp)
                     )
                     StyledOutlinedButton(
                         onClick = onDismiss,

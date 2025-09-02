@@ -8,6 +8,7 @@ import com.jfinex.admin.ui.pager.page.collection.components.similarity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,7 +16,25 @@ class ActivitiesViewModel @Inject constructor(
     private val repo: CollectionRepo
 ) : ViewModel() {
 
-    private val allActivities = repo.getAll()
+    private val _block = MutableStateFlow("")
+    private val _dates = MutableStateFlow<List<LocalDate>>(emptyList())
+    private val _officers = MutableStateFlow<List<String>>(emptyList())
+    private val _types = MutableStateFlow<List<String>>(emptyList())
+    private val _items = MutableStateFlow<List<String>>(emptyList())
+
+    private val _blockFilter = ""
+    private val _dateFilter = emptyList<LocalDate>()
+    private val _officerFilter = emptyList<String>()
+    private val _typeFilter = emptyList<String>()
+    private val _itemFilter = emptyList<String>()
+
+    private val allActivities = repo.getByFilter(
+        block = _blockFilter,
+        date = _dateFilter,
+        officerName = _officerFilter,
+        types = _typeFilter,
+        item = _itemFilter
+    )
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query

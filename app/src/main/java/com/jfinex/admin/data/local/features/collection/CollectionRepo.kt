@@ -1,6 +1,7 @@
 package com.jfinex.admin.data.local.features.collection
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -9,6 +10,27 @@ class CollectionRepo @Inject constructor(
 ) {
 
     fun getAll(): Flow<List<Collection>> = dao.getAllCollections()
+
+    fun getByFilter(
+        block: String,
+        date: List<LocalDate>,
+        officerName: List<String>,
+        types: List<String>,
+        item: List<String>
+    ): Flow<List<Collection>> {
+        return dao.getAllCollections().map { collections ->
+            collections.filter { collection ->
+                val blockMatch = block.isBlank() || collection.block == block
+                val dateMatch = date.isEmpty() || collection.date in date
+                val officerMatch = officerName.isEmpty() || collection.officerName in officerName
+                val typeMatch = types.isEmpty() || collection.type in types
+                val itemMatch = item.isEmpty() || (collection.item != null && collection.item in item)
+
+                blockMatch && dateMatch && officerMatch && typeMatch && itemMatch
+            }
+        }
+    }
+
 
     suspend fun addStudent(
         date: LocalDate,

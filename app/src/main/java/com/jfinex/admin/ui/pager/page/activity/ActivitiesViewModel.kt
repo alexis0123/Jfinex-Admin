@@ -45,6 +45,10 @@ class ActivitiesViewModel @Inject constructor(
                     item.isNotEmpty()
         }.stateIn(viewModelScope, SharingStarted.Lazily, false)
 
+    val items = repo.getAllItems().stateIn(
+        viewModelScope, SharingStarted.Lazily, emptyList()
+    )
+
     private val allActivities: Flow<List<Collection>> =
         combine(
             _blockFilter,

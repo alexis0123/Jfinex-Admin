@@ -100,6 +100,7 @@ fun ImportConfig(
                         onConfirm = {
                             launcher.launch(arrayOf("application/json"))
                             viewModel.reset()
+                            showWarning = false
                         },
                         onDismiss = onDismiss
                     )

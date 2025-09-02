@@ -395,7 +395,7 @@ fun CollectionPage(
                     shape = RoundedCornerShape(10.dp),
                     border = BorderStroke(1.dp, Color.Black),
                     modifier = Modifier
-                        .width(185.dp)
+                        .width(175.dp)
                         .height(60.dp)
                 ) {
                     Text("Save & Continue", color = Color.Black)

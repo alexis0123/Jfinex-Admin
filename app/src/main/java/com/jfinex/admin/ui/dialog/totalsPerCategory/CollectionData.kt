@@ -68,13 +68,12 @@ fun CollectionData(
                     items(fields) { field ->
                         var expanded by remember { mutableStateOf(false) }
                         val categories = field.categories
-                        var totalPerCategory: Map<String, Int> = receipts.groupingBy {
-                            it.category
-                        }.eachCount()
-                        var receiptTotal = 0
-                        receipts.forEach {
-                            if (field.name == it.item) receiptTotal += 1
-                        }
+                        val receiptsForField = receipts.filter { it.item == field.name }
+                        val totalPerCategory: Map<String, Int> = receiptsForField
+                            .groupingBy { it.category }
+                            .eachCount()
+                        val receiptTotal = receiptsForField.size
+
 
                         Box(
                             modifier = Modifier

@@ -15,24 +15,38 @@ import javax.inject.Inject
 class ActivitiesViewModel @Inject constructor(
     private val repo: CollectionRepo
 ) : ViewModel() {
-    private val _blockFilter = ""
-    val blockFilter = _blockFilter
-    private val _dateFilter = emptyList<LocalDate>()
-    val dateFilter = _dateFilter
-    private val _officerFilter = emptyList<String>()
-    val officerFilter =_officerFilter
-    private val _typeFilter = emptyList<String>()
-    val typeFilter = _typeFilter
-    private val _itemFilter = emptyList<String>()
-    val itemFilter = _itemFilter
+    private val _blockFilter = MutableStateFlow("")
+    val blockFilter: StateFlow<String> = _blockFilter
 
-    private val allActivities = repo.getByFilter(
-        block = _blockFilter,
-        date = _dateFilter,
-        officerName = _officerFilter,
-        types = _typeFilter,
-        item = _itemFilter
-    )
+    private val _dateFilter = MutableStateFlow(emptyList<LocalDate>())
+    val dateFilter: StateFlow<List<LocalDate>> = _dateFilter
+
+    private val _officerFilter = MutableStateFlow(emptyList<String>())
+    val officerFilter: StateFlow<List<String>> = _officerFilter
+
+    private val _typeFilter = MutableStateFlow(emptyList<String>())
+    val typeFilter: StateFlow<List<String>> = _typeFilter
+
+    private val _itemFilter = MutableStateFlow(emptyList<String>())
+    val itemFilter: StateFlow<List<String>> = _itemFilter
+
+    private val allActivities: Flow<List<Collection>> =
+        combine(
+            _blockFilter,
+            _dateFilter,
+            _officerFilter,
+            _typeFilter,
+            _itemFilter
+        ) { block, date, officer, types, item ->
+            repo.getByFilter(
+                block = block,
+                date = date,
+                officerName = officer,
+                types = types,
+                item = item
+            )
+        }.flatMapLatest { it }
+
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
@@ -74,6 +88,10 @@ class ActivitiesViewModel @Inject constructor(
 
     fun clear() {
         _query.value = ""
+    }
+
+    fun updateBlockFilter(value: String) {
+        _blockFilter.value = value
     }
 
 }

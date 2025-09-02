@@ -51,13 +51,15 @@ fun Filter(
                     StyledButton(
                         onClick = {
                             activitiesViewModel.updateBlockFilter(blockFilter)
+                            onDismiss()
                         },
                         name = "Apply",
                         enabled = true
                     )
                     StyledButton(
                         onClick = {
-                            activitiesViewModel.updateBlockFilter(blockFilter)
+                            activitiesViewModel.clearFilter()
+                            onDismiss()
                         },
                         name = "Clear",
                         enabled = true

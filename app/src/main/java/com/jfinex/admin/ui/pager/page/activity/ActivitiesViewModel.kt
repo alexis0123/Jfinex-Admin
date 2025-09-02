@@ -30,6 +30,21 @@ class ActivitiesViewModel @Inject constructor(
     private val _itemFilter = MutableStateFlow(emptyList<String>())
     val itemFilter: StateFlow<List<String>> = _itemFilter
 
+    val filterOn: StateFlow<Boolean> =
+        combine(
+            _blockFilter,
+            _dateFilter,
+            _officerFilter,
+            _typeFilter,
+            _itemFilter
+        ) { block, date, officer, types, item ->
+            block.isNotBlank() ||
+                    date.isNotEmpty() ||
+                    officer.isNotEmpty() ||
+                    types.isNotEmpty() ||
+                    item.isNotEmpty()
+        }.stateIn(viewModelScope, SharingStarted.Lazily, false)
+
     private val allActivities: Flow<List<Collection>> =
         combine(
             _blockFilter,

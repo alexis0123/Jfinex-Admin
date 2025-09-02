@@ -113,6 +113,10 @@ class ActivitiesViewModel @Inject constructor(
         _blockFilter.value = value
     }
 
+    fun updateItemFilter(value: List<String>) {
+        _itemFilter.value = value
+    }
+
     fun clearFilter() {
         _blockFilter.value = ""
         _dateFilter.value = emptyList()

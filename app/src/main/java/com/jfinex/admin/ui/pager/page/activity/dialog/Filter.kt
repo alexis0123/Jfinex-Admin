@@ -1,17 +1,37 @@
 package com.jfinex.admin.ui.pager.page.activity.dialog
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,7 +45,10 @@ fun Filter(
     onDismiss: () -> Unit,
     activitiesViewModel: ActivitiesViewModel = hiltViewModel()
 ) {
+    val items by activitiesViewModel.items.collectAsState()
     var blockFilter by remember { mutableStateOf(activitiesViewModel.blockFilter.value) }
+    var itemFilter by remember { mutableStateOf(activitiesViewModel.itemFilter.value) }
+    var itemExpanded by remember { mutableStateOf(false) }
     Dialog(onDismissRequest = onDismiss) {
         StyledCard(
             title = "Filter",
@@ -44,6 +67,64 @@ fun Filter(
                     isEnabled = true,
                     warning = false
                 )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .height(50.dp)
+                        .fillMaxWidth()
+                        .background(
+                            color = Color.White,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = Color.Black,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .padding(10.dp)
+                        .clickable(onClick = { itemExpanded = true })
+                ) {
+                    Text(
+                        text = "${itemFilter.size} Selected"
+                    )
+                    Icon(
+                        imageVector = if (itemExpanded) {
+                            Icons.Default.ExpandLess
+                        } else { Icons.Default.ExpandMore },
+                        contentDescription = "Expand",
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    )
+                    DropdownMenu(
+                        expanded = itemExpanded,
+                        onDismissRequest = { itemExpanded = false },
+                        modifier = Modifier
+                            .width(280.dp)
+                            .heightIn(max = 230.dp)
+                    ) {
+                        Column {
+                            items.forEach { item ->
+                                DropdownMenuItem(
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = if (item in itemFilter) {
+                                                Icons.Default.CheckBox
+                                            } else {
+                                                Icons.Default.CheckBoxOutlineBlank
+                                            },
+                                            contentDescription = null
+                                        )
+                                    },
+                                    text = { Text(item) },
+                                    onClick = {
+                                        if (item in itemFilter) {
+                                            itemFilter -= item
+                                        } else { itemFilter += item }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
@@ -51,6 +132,7 @@ fun Filter(
                     StyledButton(
                         onClick = {
                             activitiesViewModel.updateBlockFilter(blockFilter)
+                            activitiesViewModel.updateItemFilter(itemFilter)
                             onDismiss()
                         },
                         name = "Apply",

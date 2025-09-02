@@ -38,7 +38,9 @@ class ExportDataRepository @Inject constructor(
         contentResolver.openOutputStream(uri)?.bufferedWriter().use { writer ->
             writer?.appendLine("Block,Name,${field.name},Receipt Number,Officer Name,Comment")
 
-            val receiptMap = receipts.associateBy { Triple(it.name, it.block, it.category.ifBlank { "Paid" }) }
+            val receiptMap = receipts
+                .filter { it.item == field.name }
+                .associateBy { Triple(it.name, it.block, it.category.ifBlank { "Paid" }) }
 
             for (student in filteredStudents) {
                 val categories = if (field.categories.isEmpty()) listOf("Paid") else field.categories

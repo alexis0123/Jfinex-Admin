@@ -1,10 +1,7 @@
 package com.jfinex.admin.ui.dialog.addStudent
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,13 +33,18 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.jfinex.admin.data.local.features.user.UserViewModel
 import com.jfinex.admin.ui.dialog.components.StyledCard
+import com.jfinex.admin.ui.dialog.setUser.SetUserName
 
 @Composable
 fun AddStudent(
     onDismiss: () -> Unit,
-    viewModel: StudentViewModel = hiltViewModel()
+    studentViewModel: StudentViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
+    val user by userViewModel.user.collectAsState()
+
     var block by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
@@ -181,7 +183,7 @@ fun AddStudent(
 
                             val hasError = blockWarning || lastNameWarning || firstNameWarning
                             if (!hasError) {
-                                viewModel.addStudent(
+                                studentViewModel.addStudent(
                                     block = block.trim(),
                                     name = formattedName
                                 )
@@ -211,5 +213,10 @@ fun AddStudent(
                 }
             }
         }
+    }
+    if (user == null) {
+        SetUserName(
+            onDismiss = onDismiss
+        )
     }
 }

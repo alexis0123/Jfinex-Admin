@@ -46,7 +46,7 @@ fun FloatingPageTitle(tabs: List<String>, pagerState: PagerState) {
             val focus = 1f - abs(currentPage + offset - index).coerceIn(0f, 1f)
 
             val animatedScale by animateFloatAsState(
-                targetValue = lerp(0.85f, 1.2f, focus),
+                targetValue = lerp(0.85f, 1f, focus),
                 label = "scaleAnim"
             )
             val animatedAlpha by animateFloatAsState(

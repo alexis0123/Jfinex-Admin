@@ -15,18 +15,16 @@ import javax.inject.Inject
 class ActivitiesViewModel @Inject constructor(
     private val repo: CollectionRepo
 ) : ViewModel() {
-
-    private val _block = MutableStateFlow("")
-    private val _dates = MutableStateFlow<List<LocalDate>>(emptyList())
-    private val _officers = MutableStateFlow<List<String>>(emptyList())
-    private val _types = MutableStateFlow<List<String>>(emptyList())
-    private val _items = MutableStateFlow<List<String>>(emptyList())
-
     private val _blockFilter = ""
+    val blockFilter = _blockFilter
     private val _dateFilter = emptyList<LocalDate>()
+    val dateFilter = _dateFilter
     private val _officerFilter = emptyList<String>()
+    val officerFilter =_officerFilter
     private val _typeFilter = emptyList<String>()
+    val typeFilter = _typeFilter
     private val _itemFilter = emptyList<String>()
+    val itemFilter = _itemFilter
 
     private val allActivities = repo.getByFilter(
         block = _blockFilter,

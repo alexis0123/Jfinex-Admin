@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.ui.components.StyledButton
+import com.jfinex.admin.ui.components.StyledOutlinedButton
 import com.jfinex.admin.ui.dialog.components.StyledCard
 import com.jfinex.admin.ui.pager.page.activity.ActivitiesViewModel
 import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
@@ -52,7 +55,7 @@ fun Filter(
     Dialog(onDismissRequest = onDismiss) {
         StyledCard(
             title = "Filter",
-            cardHeight = 300.dp
+            cardHeight = 200.dp
         ) {
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -60,74 +63,83 @@ fun Filter(
                     .fillMaxSize()
                     .padding(10.dp)
             ) {
-                CollectionTextField(
-                    value = blockFilter,
-                    onValueChange = { blockFilter = it.uppercase() },
-                    placeholder = "Block",
-                    isEnabled = true,
-                    warning = false
-                )
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .height(50.dp)
-                        .fillMaxWidth()
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Color.Black,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .padding(10.dp)
-                        .clickable(onClick = { itemExpanded = true })
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth().height(50.dp)
                 ) {
-                    Text(
-                        text = "${itemFilter.size} Selected"
+                    CollectionTextField(
+                        value = blockFilter,
+                        onValueChange = { blockFilter = it.uppercase() },
+                        placeholder = "Block",
+                        isEnabled = true,
+                        warning = false,
+                        modifier = Modifier.weight(6f).fillMaxHeight()
                     )
-                    Icon(
-                        imageVector = if (itemExpanded) {
-                            Icons.Default.ExpandLess
-                        } else { Icons.Default.ExpandMore },
-                        contentDescription = "Expand",
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    )
-                    DropdownMenu(
-                        expanded = itemExpanded,
-                        onDismissRequest = { itemExpanded = false },
+                    Spacer(modifier = Modifier.weight(0.1f).fillMaxHeight())
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .width(280.dp)
-                            .heightIn(max = 230.dp)
+                            .weight(9f)
+                            .fillMaxHeight()
+                            .background(
+                                color = Color.White,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = Color.Black,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .padding(10.dp)
+                            .clickable(onClick = { itemExpanded = true })
                     ) {
-                        Column {
-                            items.forEach { item ->
-                                DropdownMenuItem(
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = if (item in itemFilter) {
-                                                Icons.Default.CheckBox
-                                            } else {
-                                                Icons.Default.CheckBoxOutlineBlank
-                                            },
-                                            contentDescription = null
-                                        )
-                                    },
-                                    text = { Text(item) },
-                                    onClick = {
-                                        if (item in itemFilter) {
-                                            itemFilter -= item
-                                        } else { itemFilter += item }
-                                    }
-                                )
+                        Text(
+                            text = if (itemFilter.isEmpty() || itemFilter.size == items.size) {
+                                "All Items"
+                            } else { "${itemFilter.size} Selected" }
+                        )
+                        Icon(
+                            imageVector = if (itemExpanded) {
+                                Icons.Default.ExpandLess
+                            } else { Icons.Default.ExpandMore },
+                            contentDescription = "Expand",
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        )
+                        DropdownMenu(
+                            expanded = itemExpanded,
+                            onDismissRequest = { itemExpanded = false },
+                            modifier = Modifier
+                                .width(160.dp)
+                                .heightIn(max = 230.dp)
+                        ) {
+                            Column {
+                                items.forEach { item ->
+                                    DropdownMenuItem(
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = if (item in itemFilter) {
+                                                    Icons.Default.CheckBox
+                                                } else {
+                                                    Icons.Default.CheckBoxOutlineBlank
+                                                },
+                                                contentDescription = null
+                                            )
+                                        },
+                                        text = { Text(item) },
+                                        onClick = {
+                                            if (item in itemFilter) {
+                                                itemFilter -= item
+                                            } else { itemFilter += item }
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
                 }
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().height(50.dp)
                 ) {
                     StyledButton(
                         onClick = {
@@ -136,15 +148,24 @@ fun Filter(
                             onDismiss()
                         },
                         name = "Apply",
-                        enabled = true
+                        enabled = true,
+                        modifier = Modifier.weight(3f).fillMaxHeight()
                     )
+                    Spacer(modifier = Modifier.weight(0.1f).fillMaxHeight())
                     StyledButton(
                         onClick = {
                             activitiesViewModel.clearFilter()
                             onDismiss()
                         },
                         name = "Clear",
-                        enabled = true
+                        enabled = true,
+                        modifier = Modifier.weight(3f).fillMaxHeight()
+                    )
+                    Spacer(modifier = Modifier.weight(0.1f).fillMaxHeight())
+                    StyledOutlinedButton(
+                        onClick = onDismiss,
+                        name = "Cancel",
+                        modifier = Modifier.weight(3f).fillMaxHeight()
                     )
                 }
             }

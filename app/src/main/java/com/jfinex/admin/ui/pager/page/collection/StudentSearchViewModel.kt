@@ -29,6 +29,9 @@ class StudentSearchViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _selectedStudent = MutableStateFlow<Student?>(null)
+    val selectedStudent: StateFlow<Student?> = _selectedStudent
+
     val results: StateFlow<List<Student>> =
         combine(_query, _blockFilter, allStudents) { query, block, students ->
             Triple(query.lowercase(), block, students)
@@ -67,9 +70,14 @@ class StudentSearchViewModel @Inject constructor(
         _studentIsSelected.value = true
     }
 
+    fun getStudent(student: Student) {
+        _selectedStudent.value = student
+    }
+
     fun clear() {
         updateQuery("")
         updateBlock("")
+        _selectedStudent.value = null
         if (_studentIsSelected.value) _studentIsSelected.value = false
     }
 

@@ -64,8 +64,8 @@ fun CollectionPage(
     val isLoading by studentViewModel.isLoading.collectAsState()
     val user by userViewModel.user.collectAsState()
     val newUser by userViewModel.isNewUser.collectAsState()
+    val selectedStudent by studentViewModel.selectedStudent.collectAsState()
     var userRequired by remember { mutableStateOf(false) }
-    var selectedStudent by remember { mutableStateOf<Student?>(null) }
     var showResults by remember { mutableStateOf(false) }
     var showEmptyFieldWarning by remember { mutableStateOf(false) }
     var showEmptyStudentWarning by remember { mutableStateOf(false) }
@@ -456,7 +456,7 @@ fun CollectionPage(
                                             studentViewModel.updateBlock(student.block)
                                             focusManager.clearFocus()
                                             studentViewModel.selectStudent()
-                                            selectedStudent = student
+                                            studentViewModel.getStudent(student)
                                             showResults = false
                                         }
                                 ) {

@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.EditOff
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.FilterAltOff
 import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.material.icons.filled.Visibility
@@ -58,6 +59,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jfinex.admin.data.local.components.formattedDate
 import com.jfinex.admin.data.local.features.collection.Collection
 import com.jfinex.admin.data.local.features.user.UserViewModel
+import com.jfinex.admin.ui.pager.page.activity.dialog.Filter
 import com.jfinex.admin.ui.pager.page.activity.dialog.ViewComment
 import com.jfinex.admin.ui.pager.page.collection.components.CollectionTextField
 
@@ -71,9 +73,11 @@ fun ActivityPage(
     val activities by activityViewModel.results.collectAsState()
     val query by activityViewModel.query.collectAsState()
     val isLoading by activityViewModel.isLoading.collectAsState()
+    val filterOn by activityViewModel.filterOn.collectAsState()
     var showVoidConfirmation by remember { mutableStateOf(false) }
     var showViewComment by remember { mutableStateOf(false) }
     var selectedActivity by remember { mutableStateOf<Collection?>(null) }
+    var showFilter by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
 
@@ -89,6 +93,12 @@ fun ActivityPage(
         ViewComment(
             comment = selectedActivity?.comment ?: "",
             onDismiss = { showViewComment = false }
+        )
+    }
+
+    if (showFilter) {
+        Filter(
+            onDismiss = { showFilter = false }
         )
     }
 
@@ -156,14 +166,27 @@ fun ActivityPage(
                             .weight(0.65f)
                             .background(Color.Transparent, shape = RoundedCornerShape(10.dp))
                             .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
+                            .clickable(
+                                onClick = { showFilter = true }
+                            )
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.FilterAltOff,
-                            contentDescription = "Filter",
-                            tint = Color.Gray,
-                            modifier = Modifier
-                                .size(30.dp)
-                        )
+                        if (filterOn) {
+                            Icon(
+                                imageVector = Icons.Default.FilterAlt,
+                                contentDescription = "FilterOn",
+                                tint = Color.Gray,
+                                modifier = Modifier
+                                    .size(30.dp)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.FilterAltOff,
+                                contentDescription = "FilterOff",
+                                tint = Color.Gray,
+                                modifier = Modifier
+                                    .size(30.dp)
+                            )
+                        }
                     }
                 }
 

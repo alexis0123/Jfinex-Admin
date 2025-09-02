@@ -25,4 +25,7 @@ interface CollectionDao {
     @Query("SELECT * FROM collections")
     fun getAllCollections(): Flow<List<Collection>>
 
+    @Query("SELECT DISTINCT item FROM collections WHERE item IS NOT NULL")
+    fun getAllItems(): Flow<List<String>>
+
 }

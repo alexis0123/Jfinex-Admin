@@ -81,4 +81,6 @@ class CollectionRepo @Inject constructor(
         dao.updateCollection(collection = collection)
     }
 
+    fun getAllItems(): Flow<List<String>> = dao.getAllItems()
+
 }

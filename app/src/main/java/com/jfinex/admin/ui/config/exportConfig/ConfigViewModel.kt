@@ -91,8 +91,18 @@ class ConfigViewModel @Inject constructor(
                     fieldRepo.insert(Field(name = fieldName, categories = categories, newBase = newBase))
                 }
 
-                config.studentsWithReceiptNumber.forEach { (studentName, studentConfig) ->
-                    studentRepo.insert(Student(block = studentConfig.block, name = studentName, receiptNumber = studentConfig.receipts))
+                config.studentsWithReceiptNumber.forEach { (key, studentConfig) ->
+                    val (nameFromKey, blockFromKey) = parseKey(key)
+                    val finalName  = nameFromKey.ifBlank { studentConfig.toString() }
+                    val finalBlock = if (blockFromKey.isNotBlank()) blockFromKey else studentConfig.block
+
+                    studentRepo.insert(
+                        Student(
+                            block = finalBlock,
+                            name = finalName,
+                            receiptNumber = studentConfig.receipts
+                        )
+                    )
                 }
 
                 _importedConfig.value = config

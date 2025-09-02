@@ -23,13 +23,13 @@ class ConfigRepository @Inject constructor(
             studentsList = students,
             fields = fields.keys.toList()
         )
-
-        val studentsWithRN = studentsList.associate { student ->
-            student.name to StudentConfig(
-                block = student.block,
-                receipts = student.receiptNumbers
-            )
-        }
+        val studentsWithRN: Map<String, StudentConfig> =
+            studentsList.associate { student ->
+                makeKey(student.name.trim(), student.block.trim()) to StudentConfig(
+                    block = student.block,
+                    receipts = student.receiptNumbers
+                )
+            }
 
         return Config(
             newBaseNumbers = newBases,

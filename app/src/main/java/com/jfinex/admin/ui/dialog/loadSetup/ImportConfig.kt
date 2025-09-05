@@ -32,13 +32,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.jfinex.admin.data.local.features.user.UserViewModel
 
 @Composable
 fun ImportConfig(
     onDismiss: () -> Unit,
-    viewModel: ConfigViewModel = hiltViewModel()
+    viewModel: ConfigViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val user by userViewModel.user.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val importResult by viewModel.importResult.collectAsState()
     var showWarning by remember { mutableStateOf(false) }
@@ -110,7 +113,12 @@ fun ImportConfig(
                     Text("Importing…")
                 } else {
                     Button(
-                        onClick = { showWarning = true },
+                        onClick = {
+                            if (user == null) {
+                                launcher.launch(arrayOf("application/json"))
+                                viewModel.reset()
+                            } else { showWarning = true }
+                        },
                         shape = RoundedCornerShape(10.dp),
                         border = BorderStroke(1.dp, Color.Black),
                         modifier = Modifier.height(53.7.dp)

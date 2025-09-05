@@ -79,4 +79,5 @@ dependencies {
     implementation(libs.compose.foundation.pager)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.gson)
 }

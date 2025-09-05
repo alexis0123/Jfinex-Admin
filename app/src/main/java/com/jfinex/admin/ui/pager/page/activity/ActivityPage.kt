@@ -124,7 +124,7 @@ fun ActivityPage(
                 .align(Alignment.TopStart)
                 .padding(horizontal = 10.dp)
         ) { Text(
-            text = "Export",
+            text = userName?.name?.takeLast(5) ?: "",
             color = Color.Gray,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.align(Alignment.Center)

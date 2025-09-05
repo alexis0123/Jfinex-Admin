@@ -6,7 +6,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.DataUsage
+import androidx.compose.material.icons.filled.Dataset
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.FileOpen
+import androidx.compose.material.icons.filled.FilePresent
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.PersonAddAlt1
+import androidx.compose.material.icons.filled.PieChart
+import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SettingsSuggest
+import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -25,6 +43,7 @@ import com.jfinex.admin.ui.dialog.totalsPerCategory.CollectionData
 import com.jfinex.admin.ui.dialog.createNewSetup.CreateConfigDialog
 import com.jfinex.admin.ui.dialog.downloadData.ExportData
 import com.jfinex.admin.ui.dialog.loadSetup.ImportConfig
+import com.jfinex.admin.ui.dialog.tallyImport.ImportTally
 
 @Composable
 fun OptionsMenu() {
@@ -35,6 +54,7 @@ fun OptionsMenu() {
     var showAbout by remember { mutableStateOf(false) }
     var showCollectionData by remember { mutableStateOf(false) }
     var showExportData by remember { mutableStateOf(false) }
+    var showImportTally by remember { mutableStateOf(false) }
 
     if (showCreateConfig) {
         CreateConfigDialog(
@@ -72,12 +92,20 @@ fun OptionsMenu() {
         )
     }
 
+    if (showImportTally) {
+        ImportTally(
+            onDismiss = { showImportTally = false }
+        )
+    }
+
     Box {
         Icon(
             imageVector = Icons.Default.Menu,
             contentDescription = "Options",
             tint = MaterialTheme.colorScheme.onSecondary,
-            modifier = Modifier.clickable { expanded = true }.size(30.dp)
+            modifier = Modifier
+                .clickable { expanded = true }
+                .size(30.dp)
         )
 
         DropdownMenu(
@@ -88,6 +116,12 @@ fun OptionsMenu() {
             Column {
                 DropdownMenuItem(
                     text = { Text("Create New Setup") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.AddCircle,
+                            contentDescription = "Create"
+                        )
+                    },
                     onClick = {
                         expanded = false
                         showCreateConfig = true
@@ -95,20 +129,51 @@ fun OptionsMenu() {
                 )
                 DropdownMenuItem(
                 text = { Text("Load Setup") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.FileOpen,
+                            contentDescription = "Set"
+                        )
+                    },
                 onClick = {
                         expanded = false
                         showImportConfig = true
                     }
                 )
                 DropdownMenuItem(
+                    text = { Text("Import Tally") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Receipt,
+                            contentDescription = "Import Receipt"
+                        )
+                    },
+                    onClick = {
+                        expanded = false
+                        showImportTally = true
+                    }
+                )
+                DropdownMenuItem(
                     text = { Text("Totals per Category") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.PieChart,
+                            contentDescription = "Totals"
+                        )
+                    },
                     onClick = {
                         expanded = false
                         showCollectionData = true
                     }
                 )
                 DropdownMenuItem(
-                        text = { Text("Download Data") },
+                    text = { Text("Download Data") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.FileDownload,
+                            contentDescription = "Download to file"
+                        )
+                    },
                     onClick = {
                         expanded = false
                         showExportData = true
@@ -116,6 +181,12 @@ fun OptionsMenu() {
                 )
                 DropdownMenuItem(
                     text = { Text("Add Student") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.PersonAddAlt1,
+                            contentDescription = "Add student"
+                        )
+                    },
                     onClick = {
                         expanded = false
                         showAddStudent = true
@@ -123,6 +194,12 @@ fun OptionsMenu() {
                 )
                 DropdownMenuItem(
                     text = { Text("About") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Info"
+                        )
+                    },
                     onClick = {
                         expanded = false
                         showAbout = true

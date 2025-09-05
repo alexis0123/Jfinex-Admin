@@ -24,6 +24,9 @@ interface ReceiptDao {
     @Query("DELETE FROM receipt")
     suspend fun clear()
 
+    @Query("DELETE FROM receipt WHERE officerName = :officer")
+    suspend fun removeByOfficer(officer: String)
+
     @Query(
         """
         SELECT * FROM receipt

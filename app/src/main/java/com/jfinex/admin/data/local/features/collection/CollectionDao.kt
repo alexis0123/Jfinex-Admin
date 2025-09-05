@@ -25,6 +25,9 @@ interface CollectionDao {
     @Query("SELECT * FROM collections")
     fun getAllCollections(): Flow<List<Collection>>
 
+    @Query("DELETE FROM collections WHERE officerName = :officer")
+    suspend fun removeByOfficer(officer: String)
+
     @Query("SELECT DISTINCT item FROM collections WHERE item IS NOT NULL")
     fun getAllItems(): Flow<List<String>>
 

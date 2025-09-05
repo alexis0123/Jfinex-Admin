@@ -46,6 +46,7 @@ import com.jfinex.admin.ui.dialog.setUser.SetUserName
 import com.jfinex.admin.ui.pager.page.collection.dialog.comment.Comment
 import com.jfinex.admin.ui.pager.page.collection.dialog.receipt.GenerateReceipt
 import com.jfinex.admin.ui.pager.page.collection.dialog.receipt.ReceiptGeneratorViewModel
+import kotlin.text.dropLast
 
 @Composable
 fun CollectionPage(
@@ -126,7 +127,7 @@ fun CollectionPage(
                 .align(Alignment.TopEnd)
                 .padding(horizontal = 10.dp)
         ) { Text(
-            text = user?.name?.takeLast(5) ?: "",
+            text = user?.name?.dropLast(6) ?: "",
             color = Color.Gray,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.align(Alignment.Center)

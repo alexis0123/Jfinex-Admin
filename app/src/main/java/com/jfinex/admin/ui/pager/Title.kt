@@ -2,6 +2,7 @@ package com.jfinex.admin.ui.pager
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.jfinex.admin.BuildConfig
 
 @Composable
 fun Title() {
@@ -29,29 +31,44 @@ fun Title() {
             .height(80.dp)
             .zIndex(1f)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
+                .padding(top = 30.dp)
         ) {
-            Box {
+            Box(modifier = Modifier.fillMaxWidth().weight(0.4f).padding(horizontal = 20.dp)) {
                 Text(
-                    text = "JFINEX - Admin",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 26.sp,
+                    text = "v${BuildConfig.APP_VERSION}",
+                    color = Color.Gray,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.offset(1.dp, 1.dp)
-                )
-                Text(
-                    text = "JFINEX - Admin",
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Bold
+                    modifier = Modifier.align(Alignment.BottomStart)
                 )
             }
-            OptionsMenu()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.6f)
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Box {
+                    Text(
+                        text = "JFINEX - Admin",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.offset(1.dp, 1.dp)
+                    )
+                    Text(
+                        text = "JFINEX - Admin",
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                OptionsMenu()
+            }
         }
     }
 }

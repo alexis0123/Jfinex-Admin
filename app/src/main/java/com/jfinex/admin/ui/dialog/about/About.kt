@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.jfinex.admin.BuildConfig
 import com.jfinex.admin.ui.dialog.components.StyledCard
 
 @Composable
@@ -26,7 +27,7 @@ fun About(
     Dialog(onDismissRequest = onDismiss) {
         StyledCard(
             title = "About",
-            cardHeight = 350.dp
+            cardHeight = 400.dp
         ) {
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -40,6 +41,10 @@ fun About(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
+                    text = "version:    ${BuildConfig.APP_VERSION}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
                     text = "JFINEX Collection is a collection system built to support student organizations " +
                             "with efficient record-keeping, receipt tracking, " +
                             "and data management.",
@@ -47,9 +52,10 @@ fun About(
                 )
 
                 val uriHandler = LocalUriHandler.current
-                val annotatedText = buildAnnotatedString {
-                    append("This app was designed, developed, and maintained by ")
-
+                val authorText = buildAnnotatedString {
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
+                        append("This app was designed, developed, and maintained by ")
+                    }
                     pushStringAnnotation("URL", "https://alexis0123.github.io/")
                     withStyle(
                         style = SpanStyle(
@@ -59,19 +65,52 @@ fun About(
                         append("Alexis Buban")
                     }
                     pop()
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
+                        append(
+                            ", with a focus on reliability, simplicity, and offline-first functionality " +
+                                    "to make collection processes smoother and more accessible."
+                        )
+                    }
+                }
 
-                    append(", with a focus on reliability, simplicity, and offline-first functionality " +
-                            "to make collection processes smoother and more accessible.")
+                val docsText = buildAnnotatedString {
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
+                        append("See ")
+                    }
+                    pushStringAnnotation("DOCS", "https://alexis0123.github.io/project-jfinex-collection.html#Usage")
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color.Blue
+                        )
+                    ) {
+                        append("Documentation")
+                    }
+                    pop()
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
+                        append(" for details on setup, features, and usage.")
+                    }
                 }
 
                 ClickableText(
-                    text = annotatedText,
+                    text = authorText,
                     style = MaterialTheme.typography.bodyMedium,
                     onClick = { offset ->
-                        annotatedText.getStringAnnotations("URL", offset, offset)
-                            .firstOrNull()?.let { uriHandler.openUri(it.item) }
+                        authorText.getStringAnnotations(start = offset, end = offset).firstOrNull()?.let {
+                            uriHandler.openUri(it.item)
+                        }
                     }
                 )
+
+                ClickableText(
+                    text = docsText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    onClick = { offset ->
+                        docsText.getStringAnnotations(start = offset, end = offset).firstOrNull()?.let {
+                            uriHandler.openUri(it.item)
+                        }
+                    }
+                )
+
             }
         }
     }

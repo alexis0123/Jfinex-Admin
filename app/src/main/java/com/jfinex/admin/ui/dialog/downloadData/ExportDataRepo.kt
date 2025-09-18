@@ -36,7 +36,7 @@ class ExportDataRepository @Inject constructor(
         }.sortedWith(compareBy<Student> { it.block }.thenBy { it.name })
 
         contentResolver.openOutputStream(uri)?.bufferedWriter().use { writer ->
-            writer?.appendLine("Block,Name,${field.name},Receipt Number,Officer Name,Comment")
+            writer?.appendLine("Block,Name,${field.name},Receipt Number,Date,Officer Name,Comment")
 
             val receiptMap = receipts
                 .filter { it.item == field.name }
@@ -75,6 +75,7 @@ class ExportDataRepository @Inject constructor(
                             "${esc(student.name)}," +
                             "${esc(category)}," +
                             "${esc(receiptNumber)}," +
+                            "${esc(receipt?.date?.toString()?:"")}," +
                             "${esc(officerName)}," +
                             esc(comment)
                 )
